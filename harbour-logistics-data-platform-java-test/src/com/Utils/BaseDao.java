@@ -5,12 +5,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseDao {
+public class BaseDao {
 
     //非DQL 通用的增、删、改的方法
     //String sql：sql
     //Object... args：给sql中的?设置的值列表，可以是0~n
-    protected int executeUpdate(String sql,Object... params) throws SQLException {
+    public int executeUpdate(String sql,Object... params) throws SQLException {
         //创建PreparedStatement对象，对sql预编译
         Connection connection = JdbcUtils.getConnection();
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -39,7 +39,7 @@ public abstract class BaseDao {
     //2.要使用反射技术给属性赋值
     //public <T>List<T>
     //executeQuery(class<T> clazz,String sql,Object...params);
-    protected <T> List<T> executeQuery(Class<T> clazz, String sql, Object... args) throws Exception {
+    public <T> List<T> executeQuery(Class<T> clazz, String sql, Object... args) throws Exception {
         //创建PreparedStatement对象，对sql预编译
         Connection connection = JdbcUtils.getConnection();
         PreparedStatement ps = connection.prepareStatement(sql);
