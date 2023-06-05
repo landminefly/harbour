@@ -1,17 +1,17 @@
 <script>
-import module1 from './module1.vue';
+import DataSourceManagement from './data-source-management.vue';
 import module2 from './module2.vue';
 import darkModeBtn from './dark-mode-btn.vue';
 export default {
   components: {
-    module1,
+    DataSourceManagement,
     module2,
     darkModeBtn,
   },
   data() {
     return {
       //侧边栏、模块wrapper的高
-      adminModuleSideHeight: '740px',
+      adminModuleSideHeight: '720px',
       //分别是模块wrapper的宽、动画
       //在收起、展开侧边栏时需要使用
       adminModuleWrapperWidth: '85%',
@@ -38,9 +38,9 @@ export default {
     updateAdminModuleSideHeight() {
       const windowInnerHeight = window.innerHeight;
       if (windowInnerHeight < 800) {
-        this.adminModuleSideHeight = `740px`;
+        this.adminModuleSideHeight = `720px`;
       } else {
-        this.adminModuleSideHeight = `${windowInnerHeight - 60}px`;
+        this.adminModuleSideHeight = `${windowInnerHeight - 80}px`;
       }
     },
   },
@@ -58,7 +58,7 @@ export default {
     //更改黑夜模式#010409' : '#f0f6fc'
     '$store.state.isDarkMode': {
       handler(newValue) {
-        this.darkModeColor.header = newValue ? '#0d1117' : '#f6f8fa';
+        this.darkModeColor.header = newValue ? '#103f91' : '#41a5ee';
         this.darkModeColor.sideBar = newValue ? '#0d1117' : '#f6f8fa';
         this.darkModeColor.module = newValue ? '#010409' : '#ffffff';
         this.darkModeColor.border = newValue ? '#21262d' : '#d0d7de';
@@ -81,16 +81,15 @@ export default {
 </script>
 
 <template>
-
   <div id="admin-wrapper">
 
     <!-- 头部 -->
-    <div id="admin-header" :style="{ backgroundColor: darkModeColor.header, borderColor: darkModeColor.border }">
-      
+    <div id="admin-header" :style="{ backgroundColor: darkModeColor.header}">
+
       <div id="admin-title-wrapper">
-        <div id="admin-title">永雏塔菲😘😘😘</div>
+        <div id="admin-title">空崎日奈😘😘😘</div>
       </div>
-      
+
       <div id="admin-dark-mode-btn-wrapper">
         <div>
           <darkModeBtn></darkModeBtn>
@@ -99,7 +98,7 @@ export default {
 
       <button @click="adminLogout" id="admin-logout"></button>
       <label for="admin-logout" id="admin-logout-label">登出</label>
-    
+
     </div>
 
     <!-- 侧边栏 -->
@@ -110,7 +109,7 @@ export default {
           <span>收起侧边栏</span>&nbsp&nbsp&nbsp&nbsp&nbsp<span class="iconfont icon-zuojiantou"></span>
         </div>
         <div id="module1-nav" @click="selectWhich = 1" :class="{ active: selectWhich === 1 }">
-          模块1
+          数据源管理
         </div>
         <div id="module2-nav" @click="selectWhich = 2" :class="{ active: selectWhich === 2 }">
           模块2
@@ -129,7 +128,7 @@ export default {
     <div id="admin-module-wrapper"
       :style="{ height: adminModuleSideHeight, width: adminModuleWrapperWidth, transition: adminModuleWrapperTransition, backgroundColor: darkModeColor.module }">
       <Transition name="module" mode="out-in">
-        <module1 v-if="selectWhich === 1"></module1>
+        <DataSourceManagement v-if="selectWhich === 1"></DataSourceManagement>
         <module2 v-else-if="selectWhich === 2"></module2>
       </Transition>
     </div>
@@ -138,7 +137,6 @@ export default {
 </template>
 
 <style>
-
 /* 页面主样式 */
 #admin-wrapper {
   width: 100%;
@@ -149,9 +147,10 @@ export default {
 
 /* 以下为顶部样式 */
 #admin-header {
-  height: 60px;
+  height: 80px;
   width: 100%;
-  border-bottom: 1px solid;
+  /* border-bottom: 1px solid; */
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   position: absolute;
   transition: all 0.3s;
@@ -166,8 +165,8 @@ export default {
 #admin-title-wrapper {
   position: absolute;
   left: 30px;
-  height: 60px;
-  line-height: 60px;
+  height: 80px;
+  line-height: 80px;
   width: 300px;
   font-size: 30px;
   font-weight: 900;
@@ -212,7 +211,7 @@ export default {
 
 #admin-dark-mode-btn-wrapper>div {
   position: absolute;
-  top: 11px;
+  top: 20px;
   transform: scale(0.6);
 }
 
@@ -222,8 +221,9 @@ export default {
   padding-top: 100px;
   border-right: 1px solid;
   box-sizing: border-box;
+  box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.2);
   position: absolute;
-  top: 60px;
+  top: 80px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -285,7 +285,7 @@ export default {
   line-height: 50px;
   background-color: #d2691e;
   position: absolute;
-  top: 5px;
+  top: 10px;
   left: -120px;
   transition: all 0.3s;
 }
@@ -323,7 +323,7 @@ export default {
   line-height: 50px;
   background-color: chocolate;
   position: absolute;
-  top: 65px;
+  top: 90px;
   left: -130px;
   /* 第三 */
   z-index: 99;
@@ -355,7 +355,7 @@ export default {
 #admin-module-wrapper {
   position: absolute;
   right: 0;
-  top: 60px;
+  top: 80px;
   /* 第三 */
   z-index: 9;
 }

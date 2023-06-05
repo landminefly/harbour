@@ -1,0 +1,96 @@
+<script>
+export default {
+    props: ['readyToClose'],
+    emits: ['response'],
+    data() {
+        return {
+            darkModeColor: {
+                backgroundColor: null,
+            }
+        }
+    },
+    watch: {
+        //更改黑夜模式#010409' : '#f0f6fc'
+        '$store.state.isDarkMode': {
+            handler(newValue) {
+                this.darkModeColor.backgroundColor = newValue ? '#010409' : '#ffffff';
+            },
+            //页面首次加载时初始化
+            immediate: true
+        }
+    }
+}
+</script>
+
+<template>
+    <Transition name="ensure-close-pop-up">
+        <div id="ensure-close-pop-up" v-if="readyToClose" :style="darkModeColor">
+            <span>确定要关闭吗？<br>所有未保存的内容都将丢失！</span>
+            <br>
+            <div id="btns">
+                <div id="ensure" @click="$emit('response', true)">确认</div>
+                <div id="cancel" @click="$emit('response', false)">取消</div>
+            </div>
+        </div>
+    </Transition>
+</template>
+
+<style>
+#ensure-close-pop-up {
+    height: 40%;
+    width: 50%;
+    border: 1px rgb(200, 0, 0) solid;
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(200, 0, 0, 0.5);
+    font-size: 20px;
+    padding-top: 50px;
+    line-height: 50px;
+    text-align: center;
+    z-index: 9999999;
+}
+
+#ensure-close-pop-up>#btns {
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+    justify-content: space-evenly;
+    background-color: transparent;
+}
+
+#ensure-close-pop-up>#btns>div {
+    cursor: pointer;
+    line-height: 40px;
+    height: 40px;
+    width: 100px;
+    border-radius: 10px;
+    border: 2px #808080 solid;
+    position: relative;
+    bottom: -50px;
+    transition: all 0.2s;
+}
+
+#ensure-close-pop-up>#btns>div:hover {
+    background-color: rgba(128, 128, 128, 0.3);
+}
+
+
+.ensure-close-pop-up-enter-active,
+.ensure-close-pop-up-leave-active {
+    transition: all 0.3s;
+}
+
+.ensure-close-pop-up-enter-from,
+.ensure-close-pop-up-leave-to {
+    opacity: 0;
+}
+</style>

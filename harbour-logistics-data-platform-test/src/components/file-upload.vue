@@ -89,11 +89,16 @@ export default {
     display: block;
     height: 30px;
     width: 80px;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
     border-radius: 10px;
+    border: 2px #808080 solid;
     font-size: 15px;
-    color: white;
     line-height: 30px;
     text-align: center;
+    transition: all 0.1s;
+}
+
+#select-label:hover {
+    background-color: rgba(128, 128, 128,0.3);
 }
 </style>

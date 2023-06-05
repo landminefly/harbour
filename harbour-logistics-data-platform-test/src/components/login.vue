@@ -34,11 +34,11 @@ export default {
     methods: {
         //管理员登录验证
         adminLogin() {
-            if (this.userInput === '') {
+            if ((this.userInput = this.userInput.trim()) === '') {
                 this.isErrorOccur.errorCode = 1;
                 this.setShake();
                 return;
-            } else if (this.pwdInput === '') {
+            } else if ((this.pwdInput = this.pwdInput.trim()) === '') {
                 this.isErrorOccur.errorCode = 2;
                 this.setShake();
                 return;
@@ -111,7 +111,7 @@ export default {
             <!-- 登录选择界面 -->
             <div v-if="selectWhich === 0" id="login-select-wrapper">
                 <div id="title">
-                    <p>永雏塔菲😘😘😘</p>
+                    <p>原神，启动！😡😡😡</p>
                 </div>
                 <div id="cus-login-wrapper" @click="selectWhich = 1" @click.prevent="cusLogin"
                     :style="{ backgroundColor: isDarkMode.backgroundColor }">
