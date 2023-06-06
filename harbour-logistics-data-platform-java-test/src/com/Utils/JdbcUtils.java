@@ -1,56 +1,55 @@
 package com.Utils;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
+import org.apache.commons.dbutils.DbUtils;
 
-import javax.sql.DataSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
-public class JdbcUtils {
-    //连接池对象
-    private static DataSource dataSource = null;
-
-    private static ThreadLocal<Connection> tl = new ThreadLocal<>();
-
-    static{
-        //初始化连接池对象
-        Properties properties = new Properties();
-        InputStream ips = JdbcUtils.class.getClassLoader().getResourceAsStream("druid.properties");
-        try {
-            properties.load(ips);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            dataSource = DruidDataSourceFactory.createDataSource(properties);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+public class JdbcUtils
+{
+    /**
+     * @Description 创建Druid数据库连接池并获取连接
+     */
+    //将连接池dataSource声明为属性
+    private static DruidDataSource dataSource = null;
+    //在静态代码块中创建连接池dataSource，因为连接池只需一个即可
+    static
+    {
+        try
+        {
+            //加载配置文件
+            Properties properties = new Properties();
+            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("druid.properties");
+            properties.load(is);
+            //使用连接池工厂DruidDataSourceFactory传入配置信息，创建连接池dataSource
+            dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
-
-    //对外提供连接
-    public static Connection getConnection() throws SQLException {
-        //线程本地变量中是否存在
-        Connection connection = tl.get();
-        //第一次没有
-        if (connection == null) {
-            //线程本地变量没有,连接池获取
-            connection = dataSource.getConnection();
-            tl.set(connection);
-        }
-        return  connection;
+    //使用该方法获取连接
+    public static Connection getConnection() throws SQLException
+    {
+        //直接调用连接池dataSource的getConnection()即可
+        return dataSource.getConnection();
     }
 
-    //回收连接
-    public static void freeConnection() throws SQLException {
-        Connection connection = tl.get();
-        if (connection != null) {
-            tl.remove(); //清空线程本地变量数据
-            connection.setAutoCommit(true); //事务状态回滚 false
-            connection.close(); //回收到连接池即可
-        }
+    /**
+     * @Description 使用Apache提供的DbUtils实现资源的关闭
+     */
+    public static void closeResource(Connection connection, Statement statement, ResultSet resultSet)
+    {
+        //方式1：无需try/catch环绕，方法内已将异常处理
+        DbUtils.closeQuietly(connection);
+        DbUtils.closeQuietly(statement);
+        DbUtils.closeQuietly(resultSet);
+
     }
 }
