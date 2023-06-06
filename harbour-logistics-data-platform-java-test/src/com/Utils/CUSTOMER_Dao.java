@@ -3,7 +3,7 @@ package com.Utils;
 import java.sql.Connection;
 import java.util.List;
 
-public class Dao extends BaseDao<CUSTOMER_Bean>{
+public class CUSTOMER_Dao extends BaseDao<CUSTOMER_Bean>{
 
     public int update(Connection conn, String sql, Object ... args)
     {

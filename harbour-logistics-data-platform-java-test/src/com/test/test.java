@@ -1,5 +1,8 @@
-package com.Utils;
+package com.test;
 
+import com.Utils.CUSTOMER_Bean;
+import com.Utils.CUSTOMER_Dao;
+import com.Utils.JdbcUtils;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -14,11 +17,11 @@ public class test {
 
         Connection connection = JdbcUtils.getConnection();
 
-        Dao dao = new Dao();
+        CUSTOMER_Dao CUSTOMERDao = new CUSTOMER_Dao();
 
         String sql = "DELETE FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
-        System.out.println(dao.update(connection, sql, "ZYF"));
+        System.out.println(CUSTOMERDao.update(connection, sql, "ZYF"));
 
     }
 
@@ -28,12 +31,12 @@ public class test {
 
         Connection connection = JdbcUtils.getConnection();
 
-        Dao dao = new Dao();
+        CUSTOMER_Dao CUSTOMERDao = new CUSTOMER_Dao();
 
         String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
         CUSTOMER_Bean b = new CUSTOMER_Bean();
-        b = dao.selectForOneReturnsBean(connection,sql,"hehe");
+        b = CUSTOMERDao.selectForOneReturnsBean(connection,sql,"hehe");
 
     }
 
@@ -42,12 +45,12 @@ public class test {
 
         Connection connection = JdbcUtils.getConnection();
 
-        Dao dao = new Dao();
+        CUSTOMER_Dao CUSTOMERDao = new CUSTOMER_Dao();
 
         String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
         List<CUSTOMER_Bean> customerBeans = new ArrayList<>();
-        customerBeans = dao.selectNotForOneReturnsBeanList(connection,sql,"haha");
+        customerBeans = CUSTOMERDao.selectNotForOneReturnsBeanList(connection,sql,"haha");
 
         System.out.println(customerBeans);
 
@@ -58,11 +61,11 @@ public class test {
 
         Connection connection = JdbcUtils.getConnection();
 
-        Dao dao = new Dao();
+        CUSTOMER_Dao CUSTOMERDao = new CUSTOMER_Dao();
 
         String sql = "SELECT count(*) FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
-        long i = dao.getValue(connection,sql,"haha");
+        long i = CUSTOMERDao.getValue(connection,sql,"haha");
         System.out.println(i);
 
     }
@@ -72,11 +75,11 @@ public class test {
 
         Connection connection = JdbcUtils.getConnection();
 
-        Dao dao = new Dao();
+        CUSTOMER_Dao CUSTOMERDao = new CUSTOMER_Dao();
 
         String sql = "SELECT CUSTOMER_NUMBER FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
-        String i = dao.getValue(connection,sql,"haha");
+        String i = CUSTOMERDao.getValue(connection,sql,"haha");
         System.out.println(i);
 
     }
