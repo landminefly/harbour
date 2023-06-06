@@ -20,6 +20,13 @@
       "unicode_decimal": 58922
     },
     {
+      "icon_id": "4925892",
+      "name": "关闭",
+      "font_class": "guanbi",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
       "icon_id": "5199426",
       "name": "左箭头",
       "font_class": "zuojiantou",
@@ -32,13 +39,6 @@
       "font_class": "taiyang",
       "unicode": "e635",
       "unicode_decimal": 58933
-    },
-    {
-      "icon_id": "6626333",
-      "name": "叹号",
-      "font_class": "tanhao",
-      "unicode": "e644",
-      "unicode_decimal": 58948
     },
     {
       "icon_id": "9371346",
