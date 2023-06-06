@@ -13,7 +13,7 @@ import java.util.List;
 public class test {
 
     @Test
-    public void test() throws SQLException {
+    public void test1() throws SQLException {
 
         Connection connection = JdbcUtils.getConnection();
 
@@ -36,7 +36,7 @@ public class test {
         String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER_NAME = ?;";
 
         CUSTOMER_Bean b = new CUSTOMER_Bean();
-        b = CUSTOMERDao.selectForOneReturnsBean(connection,sql,"hehe");
+        System.out.println(b = CUSTOMERDao.selectForOneReturnsBean(connection, sql, "hehe"));
 
     }
 
