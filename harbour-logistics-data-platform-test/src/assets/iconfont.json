@@ -55,6 +55,13 @@
       "unicode_decimal": 58917
     },
     {
+      "icon_id": "11747495",
+      "name": "扳手",
+      "font_class": "banshou",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
       "icon_id": "33987002",
       "name": "返回",
       "font_class": "fanhui",

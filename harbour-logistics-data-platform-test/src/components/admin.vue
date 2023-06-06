@@ -55,7 +55,7 @@ export default {
         this.adminModuleWrapperTransition = 'all 0.3s 0.3s';
       }
     },
-    //更改黑夜模式#010409' : '#f0f6fc'
+    //更改黑夜模式
     '$store.state.isDarkMode': {
       handler(newValue) {
         this.darkModeColor.header = newValue ? '#103f91' : '#41a5ee';
