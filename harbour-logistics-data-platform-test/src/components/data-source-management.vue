@@ -10,6 +10,10 @@ export default {
         return {
             isCreateSourcePopUpShown: false,
             isModifySourcePopUpShown: false,
+            isManageBtnsShown: false,
+            isEnsureToDelete: -1,
+            isEnsureToDeleteInterval: null,
+            isEnsureToDeleteMessage: '再次点击即可删除',
             dataToBeModified: [],
             darkModeColor: {
                 border: null,
@@ -57,7 +61,7 @@ export default {
             }
             this.changeFormSize();
         },
-        closeModifyPopUp(flag){
+        closeModifyPopUp(flag) {
             this.isModifySourcePopUpShown = false;
             if (flag === true) {
                 //添加成功的逻辑...
@@ -73,6 +77,24 @@ export default {
         modifySource(row) {
             this.dataToBeModified = row;
             this.isModifySourcePopUpShown = true;
+        },
+        deleteSource(row, rowIndex) {
+            this.isEnsureToDeleteMessage = '再次点击即可删除';
+            if (this.isEnsureToDeleteInterval != null){
+                clearTimeout(this.isEnsureToDeleteInterval)
+            }
+            if (this.isEnsureToDelete != rowIndex) {
+                this.isEnsureToDelete = rowIndex;
+                this.isEnsureToDeleteInterval = setTimeout(() => {
+                    this.isEnsureToDelete = -1;
+                }, 1000);
+            } else if (this.isEnsureToDelete === rowIndex) {
+                //删除逻辑...
+                this.isEnsureToDeleteMessage = '删除！';
+                this.isEnsureToDeleteInterval = setTimeout(() => {
+                    this.isEnsureToDelete = -1;
+                }, 1000);
+            }
         },
         colValue(col, index) {
             if (index === 0) {
@@ -103,7 +125,6 @@ export default {
         <createSourcePopUp :isShown="isCreateSourcePopUpShown" @close="closeCreatePopUp"></createSourcePopUp>
         <modifySourcePopUp :isShown="isModifySourcePopUpShown" :data="dataToBeModified" @close="closeModifyPopUp">
         </modifySourcePopUp>
-        <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
         <div id="source-form-wrapper"
             :style="{ height: sourceFormMetaData.formHeight + 'px', width: sourceFormMetaData.formWidth + 'px' }">
             <div id="source-form-border" ref="form">
@@ -113,14 +134,28 @@ export default {
                             {{ colName }}
                         </td>
                     </tr>
-                    <tr v-for="row in sourceFormData">
-                        <td v-for="(col, index) in row">{{ colValue(col, index) }}
-                            <span v-if="index === row.length - 1" class="iconfont icon-banshou"
-                                @click="modifySource(row)"></span>
+                    <tr v-for="(row, rowIndex) in sourceFormData">
+                        <td v-for="(col, colIndex) in row">{{ colValue(col, colIndex) }}
+                            <Transition>
+                                <span v-if="colIndex === row.length - 1 && isManageBtnsShown" class="iconfont icon-banshou"
+                                    @click="modifySource(row)"></span>
+                            </Transition>
+                            <Transition>
+                                <span v-if="colIndex === row.length - 1 && isManageBtnsShown" class="iconfont icon-quxiao"
+                                    @click="deleteSource(row, rowIndex)"></span>
+                            </Transition>
+                            <Transition>
+                                <div id="clickAgainToDelete"
+                                    v-if="colIndex === row.length - 1 && isEnsureToDelete === rowIndex"> {{ isEnsureToDeleteMessage }} </div>
+                            </Transition>
                         </td>
                     </tr>
                 </table>
             </div>
+        </div>
+        <div id="btns-wrapper">
+            <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
+            <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">管理数据源</div>
         </div>
     </div>
 </template>
@@ -135,12 +170,17 @@ export default {
     float: left;
 }
 
-#create-source-btn {
+#btns-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#btns-wrapper div {
     cursor: pointer;
     position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
+    margin: 50px;
     height: 40px;
     width: 120px;
     background-color: transparent;
@@ -152,7 +192,8 @@ export default {
     transition: all 0.1s;
 }
 
-#create-source-btn:hover {
+
+#btns-wrapper div:hover {
     background-color: rgba(128, 128, 128, 0.3);
 }
 
@@ -194,7 +235,7 @@ export default {
     background-color: rgb(128, 128, 128, 0.3);
 }
 
-#source-form span {
+#source-form span:nth-child(1) {
     cursor: pointer;
     position: absolute;
     right: -35px;
@@ -202,7 +243,41 @@ export default {
     transition: all 0.2s;
 }
 
+#source-form span:nth-child(2) {
+    cursor: pointer;
+    position: absolute;
+    color: red;
+    right: -70px;
+    font-size: 20px;
+    transition: all 0.2s;
+}
+
+#source-form #clickAgainToDelete {
+    background-color: #ff0000;
+    font-size: 16px;
+    height: 30px;
+    width: 160px;
+    line-height: 30px;
+    border-radius: 8px;
+    text-align: center;
+    position: absolute;
+    right: -250px;
+    transform: translateY(-22px);
+    transition: all 0.2s;
+}
+
 #source-form span:hover {
     transform: rotate(90deg);
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: all 0.2s;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+    transform: translateX(-100%);
 }
 </style>
