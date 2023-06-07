@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1277",
+      "name": "刷新",
+      "font_class": "shuaxin",
+      "unicode": "f015c",
+      "unicode_decimal": 983388
+    },
+    {
       "icon_id": "762985",
       "name": "取消",
       "font_class": "quxiao",
@@ -25,6 +32,20 @@
       "font_class": "guanliyuan",
       "unicode": "e62a",
       "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "4774741",
+      "name": "翻页2",
+      "font_class": "fanye",
+      "unicode": "e756",
+      "unicode_decimal": 59222
+    },
+    {
+      "icon_id": "4774750",
+      "name": "翻页1",
+      "font_class": "fanye1",
+      "unicode": "e757",
+      "unicode_decimal": 59223
     },
     {
       "icon_id": "4925892",

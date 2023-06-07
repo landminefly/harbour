@@ -31,11 +31,11 @@ export default {
             },
             sourceFormData:
                 [
-                    [0, 'fuck'],
-                    [1, 'you'],
-                    [2, 'asshole'],
-                    [3, 'you'],
-                    [0, 'know?'],
+                    [0, 'test'],
+                    [1, 'test test test'],
+                    [2, 'test test test test'],
+                    [3, 'test test test test test'],
+                    [0, 'test test'],
                 ],
             dataTransfer:
                 [
@@ -59,7 +59,6 @@ export default {
             } else if (flag === false) {
                 //添加失败的逻辑...
             }
-            this.changeFormSize();
         },
         closeModifyPopUp(flag) {
             this.isModifySourcePopUpShown = false;
@@ -68,11 +67,6 @@ export default {
             } else if (flag === false) {
                 //添加失败的逻辑...
             }
-            this.changeFormSize();
-        },
-        changeFormSize() {
-            this.sourceFormMetaData.formHeight = this.$refs.form.clientHeight;
-            this.sourceFormMetaData.formWidth = this.$refs.form.clientWidth;
         },
         modifySource(row) {
             this.dataToBeModified = row;
@@ -80,7 +74,7 @@ export default {
         },
         deleteSource(row, rowIndex) {
             this.isEnsureToDeleteMessage = '再次点击即可删除';
-            if (this.isEnsureToDeleteInterval != null){
+            if (this.isEnsureToDeleteInterval != null) {
                 clearTimeout(this.isEnsureToDeleteInterval)
             }
             if (this.isEnsureToDelete != rowIndex) {
@@ -103,6 +97,15 @@ export default {
                 return col;
             }
         },
+        lastPage() {
+            this.sourceFormData.pop();
+        },
+        nextPage() {
+            this.sourceFormData.push([1,'测试测试'])
+        },
+        flush() {
+
+        },
     },
     watch: {
         //更改黑夜模式
@@ -115,8 +118,15 @@ export default {
         },
     },
     mounted() {
-        this.changeFormSize();
-    }
+        const observer = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                // 处理目标元素的尺寸变化
+                this.sourceFormMetaData.formHeight = this.$refs.form.clientHeight;
+                this.sourceFormMetaData.formWidth = this.$refs.form.offsetWidth;
+            }
+        });
+        observer.observe(this.$refs.form);
+    },
 }
 </script>
 
@@ -134,6 +144,7 @@ export default {
                             {{ colName }}
                         </td>
                     </tr>
+
                     <tr v-for="(row, rowIndex) in sourceFormData">
                         <td v-for="(col, colIndex) in row">{{ colValue(col, colIndex) }}
                             <Transition>
@@ -146,12 +157,24 @@ export default {
                             </Transition>
                             <Transition>
                                 <div id="clickAgainToDelete"
-                                    v-if="colIndex === row.length - 1 && isEnsureToDelete === rowIndex"> {{ isEnsureToDeleteMessage }} </div>
+                                    v-if="colIndex === row.length - 1 && isEnsureToDelete === rowIndex"> {{
+                                        isEnsureToDeleteMessage }} </div>
                             </Transition>
                         </td>
                     </tr>
                 </table>
             </div>
+            <div id="form-btns-wrapper">
+                <div id="flush-wrapper">
+                    <span class="iconfont icon-shuaxin" @click="flush"></span>
+                </div>
+                <div id="page-wrapper">
+                    <span class="iconfont icon-fanye1" @click="lastPage"></span>
+                    {{ sourceFormMetaData.whichPage }} / {{ sourceFormMetaData.totalPage }} 页
+                    <span class="iconfont icon-fanye" @click="nextPage"></span>
+                </div>
+            </div>
+
         </div>
         <div id="btns-wrapper">
             <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
@@ -189,7 +212,7 @@ export default {
     font-size: 15px;
     line-height: 40px;
     text-align: center;
-    transition: all 0.1s;
+    transition: all 0.2s;
 }
 
 
@@ -201,7 +224,9 @@ export default {
     position: relative;
     left: 50%;
     margin-top: 50px;
+    margin-bottom: 50px;
     transform: translateX(-50%);
+    transition: height 0.2s;
 }
 
 #source-form-border {
@@ -253,7 +278,7 @@ export default {
 }
 
 #source-form #clickAgainToDelete {
-    background-color: #ff0000;
+    background-color: rgb(255, 0, 0, 0.8);
     font-size: 16px;
     height: 30px;
     width: 160px;
@@ -279,5 +304,42 @@ export default {
 .v-leave-to {
     opacity: 0;
     transform: translateX(-100%);
+}
+
+#form-btns-wrapper {
+    height: 40px;
+    padding: 0 10px;
+    position: absolute;
+    bottom: -60px;
+    right: -10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+#flush-wrapper,
+#page-wrapper {
+    height: 40px;
+    padding: 0 10px;
+    margin-left: 10px;
+    line-height: 40px;
+    text-align: center;
+    background-color: rgb(128, 128, 128, 0.3);
+
+    border-radius: 10px;
+}
+
+#form-btns-wrapper span {
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#form-btns-wrapper span:hover {
+    transform: scale(1.2);
+}
+
+#form-btns-wrapper span:active {
+    transform: scale(1);
 }
 </style>

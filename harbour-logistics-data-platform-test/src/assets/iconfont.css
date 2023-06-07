@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1686068892897') format('truetype');
+  src: url('iconfont.ttf?t=1686108464540') format('truetype');
 }
 
 .iconfont {
@@ -9,6 +9,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shuaxin:before {
+  content: "\f015c";
 }
 
 .icon-quxiao:before {
@@ -21,6 +25,14 @@
 
 .icon-guanliyuan:before {
   content: "\e62a";
+}
+
+.icon-fanye:before {
+  content: "\e756";
+}
+
+.icon-fanye1:before {
+  content: "\e757";
 }
 
 .icon-guanbi:before {
