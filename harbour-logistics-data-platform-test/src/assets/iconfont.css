@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1686108464540') format('truetype');
+  src: url('iconfont.ttf?t=1686130823912') format('truetype');
 }
 
 .iconfont {
@@ -53,6 +53,10 @@
 
 .icon-kehu:before {
   content: "\e625";
+}
+
+.icon-zhankai:before {
+  content: "\e63c";
 }
 
 .icon-banshou:before {

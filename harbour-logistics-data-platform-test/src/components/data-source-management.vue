@@ -93,7 +93,7 @@ export default {
         colValue(col, index) {
             if (index === 0) {
                 return this.dataTransfer[index].transfer[col].label;
-            } else if (index === 1) {
+            } else if (index >= 1) {
                 return col;
             }
         },
@@ -118,26 +118,21 @@ export default {
         },
     },
     mounted() {
-        const observer = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                // 处理目标元素的尺寸变化
-                this.sourceFormMetaData.formHeight = this.$refs.form.clientHeight;
-                this.sourceFormMetaData.formWidth = this.$refs.form.offsetWidth;
-            }
-        });
-        observer.observe(this.$refs.form);
     },
 }
 </script>
 
 <template>
-    <div id="module1-wrapper">
+    <div id="data-source-management-wrapper">
         <createSourcePopUp :isShown="isCreateSourcePopUpShown" @close="closeCreatePopUp"></createSourcePopUp>
         <modifySourcePopUp :isShown="isModifySourcePopUpShown" :data="dataToBeModified" @close="closeModifyPopUp">
         </modifySourcePopUp>
-        <div id="source-form-wrapper"
-            :style="{ height: sourceFormMetaData.formHeight + 'px', width: sourceFormMetaData.formWidth + 'px' }">
-            <div id="source-form-border" ref="form">
+        <div id="data-source-management-title">数据源管理</div>
+        <div id="btns-wrapper">
+            <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
+            <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</div>
+        </div>
+        <div id="source-form-wrapper">
                 <table id="source-form">
                     <tr>
                         <td v-for="colName in sourceFormMetaData.colName">
@@ -148,22 +143,21 @@ export default {
                     <tr v-for="(row, rowIndex) in sourceFormData">
                         <td v-for="(col, colIndex) in row">{{ colValue(col, colIndex) }}
                             <Transition>
-                                <span v-if="colIndex === row.length - 1 && isManageBtnsShown" class="iconfont icon-banshou"
+                                <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-banshou"
                                     @click="modifySource(row)"></span>
                             </Transition>
                             <Transition>
-                                <span v-if="colIndex === row.length - 1 && isManageBtnsShown" class="iconfont icon-quxiao"
+                                <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-quxiao"
                                     @click="deleteSource(row, rowIndex)"></span>
                             </Transition>
                             <Transition>
                                 <div id="clickAgainToDelete"
-                                    v-if="colIndex === row.length - 1 && isEnsureToDelete === rowIndex"> {{
+                                    v-if="colIndex === 0 && isEnsureToDelete === rowIndex"> {{
                                         isEnsureToDeleteMessage }} </div>
                             </Transition>
                         </td>
                     </tr>
                 </table>
-            </div>
             <div id="form-btns-wrapper">
                 <div id="flush-wrapper">
                     <span class="iconfont icon-shuaxin" @click="flush"></span>
@@ -176,21 +170,27 @@ export default {
             </div>
 
         </div>
-        <div id="btns-wrapper">
-            <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
-            <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">管理数据源</div>
-        </div>
     </div>
 </template>
 
 <style>
-#module1-wrapper {
+#data-source-management-wrapper {
     height: 100%;
     width: 100%;
     font-size: 18px;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
     /* 阻止外边距折叠 */
     float: left;
+}
+
+#data-source-management-title{
+    font-size: 30px;
+    font-weight: 900;
+    margin:20px 0;
 }
 
 #btns-wrapper {
@@ -203,10 +203,9 @@ export default {
 #btns-wrapper div {
     cursor: pointer;
     position: relative;
-    margin: 50px;
+    margin: 20px;
     height: 40px;
-    width: 120px;
-    background-color: transparent;
+    width: 130px;
     border-radius: 10px;
     border: 2px #808080 solid;
     font-size: 15px;
@@ -215,27 +214,22 @@ export default {
     transition: all 0.2s;
 }
 
-
 #btns-wrapper div:hover {
     background-color: rgba(128, 128, 128, 0.3);
 }
 
 #source-form-wrapper {
     position: relative;
-    left: 50%;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    transform: translateX(-50%);
-    transition: height 0.2s;
 }
 
-#source-form-border {
-    position: absolute;
-    border: 2px solid;
-    border-radius: 7px;
+#source-form{
+    user-select:text;
+    width: 100%;
+    table-layout: fixed;
 }
 
-#source-form tr:not(:last-child) {
+#source-form tr {
+    border-top: 1px solid;
     border-bottom: 1px solid;
 }
 
@@ -244,8 +238,9 @@ export default {
 }
 
 #source-form td {
+    width: 50%;
     text-align: center;
-    padding: 15px 20px;
+    padding: 20px;
     min-width: 100px;
     white-space: nowrap;
 }
@@ -260,10 +255,46 @@ export default {
     background-color: rgb(128, 128, 128, 0.3);
 }
 
+#form-btns-wrapper {
+    height: 40px;
+    margin:20px 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content:end;
+}
+
+#flush-wrapper,
+#page-wrapper {
+    font-size: 20px;
+    height: 40px;
+    padding: 3px 13px;
+    margin-left: 10px;
+    line-height: 40px;
+    text-align: center;
+    background-color: rgb(128, 128, 128, 0.3);
+    border-radius: 10px;
+}
+
+#form-btns-wrapper span {
+    font-size: 20px;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#form-btns-wrapper span:hover {
+    transform: scale(1.2);
+}
+
+#form-btns-wrapper span:active {
+    transform: scale(1);
+}
+
+
 #source-form span:nth-child(1) {
     cursor: pointer;
     position: absolute;
-    right: -35px;
+    left: 20px;
     font-size: 20px;
     transition: all 0.2s;
 }
@@ -272,7 +303,7 @@ export default {
     cursor: pointer;
     position: absolute;
     color: red;
-    right: -70px;
+    left: 60px;
     font-size: 20px;
     transition: all 0.2s;
 }
@@ -286,7 +317,7 @@ export default {
     border-radius: 8px;
     text-align: center;
     position: absolute;
-    right: -250px;
+    left: 90px;
     transform: translateY(-22px);
     transition: all 0.2s;
 }
@@ -297,49 +328,13 @@ export default {
 
 .v-enter-active,
 .v-leave-active {
-    transition: all 0.2s;
+    transition: all 0.3s;
 }
 
 .v-enter-from,
 .v-leave-to {
     opacity: 0;
-    transform: translateX(-100%);
+    transform: translateX(-200%);
 }
 
-#form-btns-wrapper {
-    height: 40px;
-    padding: 0 10px;
-    position: absolute;
-    bottom: -60px;
-    right: -10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-}
-
-#flush-wrapper,
-#page-wrapper {
-    height: 40px;
-    padding: 0 10px;
-    margin-left: 10px;
-    line-height: 40px;
-    text-align: center;
-    background-color: rgb(128, 128, 128, 0.3);
-
-    border-radius: 10px;
-}
-
-#form-btns-wrapper span {
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-#form-btns-wrapper span:hover {
-    transform: scale(1.2);
-}
-
-#form-btns-wrapper span:active {
-    transform: scale(1);
-}
 </style>

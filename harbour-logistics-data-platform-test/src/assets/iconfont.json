@@ -83,6 +83,13 @@
       "unicode_decimal": 58917
     },
     {
+      "icon_id": "11121479",
+      "name": "展开",
+      "font_class": "zhankai",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
       "icon_id": "11747495",
       "name": "扳手",
       "font_class": "banshou",

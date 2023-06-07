@@ -34,37 +34,41 @@ export default {
     methods: {
         //管理员登录验证
         adminLogin() {
-            if ((this.userInput = this.userInput.trim()) === '') {
-                this.isErrorOccur.errorCode = 1;
-                this.setShake();
-                return;
-            } else if ((this.pwdInput = this.pwdInput.trim()) === '') {
-                this.isErrorOccur.errorCode = 2;
-                this.setShake();
-                return;
-            }
-            var that = this;
-            axios({
-                method:"POST",
-                url:"/api/HLDP/com/admin/login",
-                data:{
-                    //明文传输，不管了XD
-                    username: this.userInput,
-                    pwd: this.pwdInput,
-                }
-            }).then(value =>{
-                if(value.data === 'success'){
-                    this.$store.commit('loginAsAdmin');
-                    this.$router.push('/admin');
-                }else if(value.data === 'fail'){
-                    this.isErrorOccur.errorCode = 3;
-                    this.setShake();
-                }else{
-                    console.log(value);
-                }
-            }).catch(reason =>{
-                console.log(reason);
-            })
+
+            this.$store.commit('loginAsAdmin');
+            this.$router.push('/admin');
+
+            // if ((this.userInput = this.userInput.trim()) === '') {
+            //     this.isErrorOccur.errorCode = 1;
+            //     this.setShake();
+            //     return;
+            // } else if ((this.pwdInput = this.pwdInput.trim()) === '') {
+            //     this.isErrorOccur.errorCode = 2;
+            //     this.setShake();
+            //     return;
+            // }
+            // var that = this;
+            // axios({
+            //     method:"POST",
+            //     url:"/api/HLDP/com/admin/login",
+            //     data:{
+            //         //明文传输，不管了XD
+            //         username: this.userInput,
+            //         pwd: this.pwdInput,
+            //     }
+            // }).then(value =>{
+            //     if(value.data === 'success'){
+            //         this.$store.commit('loginAsAdmin');
+            //         this.$router.push('/admin');
+            //     }else if(value.data === 'fail'){
+            //         this.isErrorOccur.errorCode = 3;
+            //         this.setShake();
+            //     }else{
+            //         console.log(value);
+            //     }
+            // }).catch(reason =>{
+            //     console.log(reason);
+            // })
         },
         setShake() {
             this.isErrorOccur.shake = false;
@@ -73,7 +77,7 @@ export default {
             }, 1);
         },
         //返回选择角色界面
-        backToSelect(){
+        backToSelect() {
             this.selectWhich = 0;
             this.isErrorOccur.errorCode = 0;
         },
@@ -111,7 +115,7 @@ export default {
             <!-- 登录选择界面 -->
             <div v-if="selectWhich === 0" id="login-select-wrapper">
                 <div id="title">
-                    <p>原神，启动！😡😡😡</p>
+                    <p>欢迎登录什么什么系统</p>
                 </div>
                 <div id="cus-login-wrapper" @click="selectWhich = 1" @click.prevent="cusLogin"
                     :style="{ backgroundColor: isDarkMode.backgroundColor }">
