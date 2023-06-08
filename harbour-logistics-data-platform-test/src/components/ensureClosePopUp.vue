@@ -28,8 +28,17 @@ export default {
             <span>确定要关闭吗？<br>所有未保存的内容都将丢失！</span>
             <br>
             <div id="btns">
-                <div id="ensure" @click="$emit('response', true)">确认</div>
-                <div id="cancel" @click="$emit('response', false)">取消</div>
+                <!-- <div id="ensure" @click="$emit('response', true)">确认</div>
+                <div id="cancel" @click="$emit('response', false)">取消</div> -->
+
+                <n-space>
+                    <n-button id="ensure"
+                    @click="$emit('response', true)" type="error" size="large">确认</n-button>
+                </n-space>
+                <n-space>
+                    <n-button id="cancel"
+                    @click="$emit('response', false)" type="success" size="large">取消</n-button>
+                </n-space>
             </div>
         </div>
     </Transition>
@@ -60,29 +69,19 @@ export default {
     left: 0;
     right: 0;
     margin: auto;
+    position: absolute;
+    bottom: 20%;
     display: flex;
-    width: 80%;
     flex-direction: row;
     justify-content: space-evenly;
-    background-color: transparent;
 }
 
-#ensure-close-pop-up>#btns>div {
-    cursor: pointer;
-    line-height: 40px;
+#ensure-close-pop-up>#btns #ensure,
+#ensure-close-pop-up>#btns #cancel{
+    font-size: 18px;
     height: 40px;
-    width: 100px;
-    border-radius: 10px;
-    border: 2px #808080 solid;
-    position: relative;
-    bottom: -50px;
-    transition: all 0.2s;
+    width: 80px;
 }
-
-#ensure-close-pop-up>#btns>div:hover {
-    background-color: rgba(128, 128, 128, 0.3);
-}
-
 
 .ensure-close-pop-up-enter-active,
 .ensure-close-pop-up-leave-active {

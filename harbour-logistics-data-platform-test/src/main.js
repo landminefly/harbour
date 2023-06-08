@@ -18,6 +18,8 @@ import "./assets/main.css";
 //导入vuex-persist持久化插件
 import VuexPersistence from 'vuex-persist'
 
+import naive from 'naive-ui'
+
 //设置vuex-persist
 const vuexLocal = new VuexPersistence({
     storage: window.sessionStorage,
@@ -123,5 +125,7 @@ const app = createApp(App);
 app.use(router);
 //注册vuex
 app.use(store);
+
+app.use(naive);
 //挂载
 app.mount("#app");

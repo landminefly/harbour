@@ -251,12 +251,16 @@ export default {
             </div>
 
             <div id="modify-step-btns">
-                <div id="modify-back-btn" :style="{ opacity: modifyBackBtnOpacity, visibility: modifyBackBtnIsShown }"
-                    @click="modifyBackOrNot">上一步
-                </div>
-                <div id="modify-next-finish-btn" @click="modifyNextOrFinish">{{ modifyWhichStep ===
-                    this.modifySteps.length - 1 ? '完成' : '下一步' }}
-                </div>
+                <n-space>
+                    <n-button id="modify-back-btn"
+                        :style="{ opacity: modifyBackBtnOpacity, visibility: modifyBackBtnIsShown }"
+                        @click="modifyBackOrNot" type="success" size="large">上一步</n-button>
+                </n-space>
+                <n-space>
+                    <n-button id="modify-next-finish-btn" @click="modifyNextOrFinish" type="success" size="large">{{
+                        modifyWhichStep ===
+                        this.modifySteps.length - 1 ? '完成' : '下一步' }}</n-button>
+                </n-space>
             </div>
 
 
@@ -277,23 +281,27 @@ export default {
                         <template v-for="config in step.configs">
                             <div id="config-main" v-if="showWhichConfig(step, config)">
                                 <div id="form-main" v-for="form in config.forms">
-                                    <span>{{ form.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' }}</span>
-                                    <select v-if="form.type === 'select'" v-model="form.value">
-                                        <option v-for="option in form.options" :value="option.value">{{ option.label
-                                        }}
-                                        </option>
-                                    </select>
+                                    <div class="form-title">{{ form.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' }}</div>
+                                    <n-space vertical>
+                                        <n-select class="select" v-if="form.type === 'select'" v-model:value="form.value"
+                                            :options="form.options" />
+                                    </n-space>
 
-                                    <input v-if="form.type === 'input'" type="text" v-model="form.value">
+                                    <n-space vertical>
+                                        <n-input v-if="form.type === 'input'" v-model:value="form.value" type="text" />
+                                    </n-space>
 
-                                    <input v-if="form.type === 'file'" type="file" id="file-upload"
-                                        @change="(e) => form.value = e.target.files[0]">
-                                    <label v-if="form.type === 'file'" for="file-upload" id="file-upload-label">选择文件</label>
+                                    <input v-if="form.type === 'file'" type="file" ref="fileUploadBtn" id="file-upload"
+                                        @change="(e) => form.value = e.target.files[0]" />
+                                    <n-space vertical>
+                                        <n-button v-if="form.type === 'file'" @click="this.$refs.fileUploadBtn[0].click()"
+                                            type="success" size="large">选择文件</n-button>
+                                    </n-space>
                                     <div v-if="form.type === 'file'" id="selected-file">已选择的文件: {{ typeof (form.value) ===
                                         'string' ? form.value : form.value.name }}</div>
 
 
-                                    <div v-if="form.type === 'div'">
+                                    <div v-if="form.type === 'div'" style="transform: translateY(-12%);">
                                         <p v-for="str in modifyShowCheckMessage">
                                             {{ str }}</p>
                                     </div>
@@ -416,24 +424,6 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     bottom: 5%;
-    /* left: 3%; */
-}
-
-#modify-back-btn,
-#modify-next-finish-btn {
-    cursor: pointer;
-    text-align: center;
-    width: 100px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 10px;
-    border: 2px green solid;
-    transition: all 0.2s;
-}
-
-#modify-back-btn:hover,
-#modify-next-finish-btn:hover {
-    background-color: rgba(0, 128, 128, 0.2);
 }
 
 #modify-source-main {
@@ -496,17 +486,21 @@ export default {
     align-items: center;
 }
 
-#form-main span {
-    font-size: 18px;
-    font-weight: 900;
+#form-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
-#form-main select,
-input {
+#form-main .form-title {
     font-size: 18px;
-    color: #000;
-    background-color: #b0b0b0;
-    border: 1px rgb(100, 100, 100) solid;
+    font-weight: 900;
+    text-align: center;
+}
+
+#form-main .select {
+    font-size: 18px;
     padding: 5px 10px;
     border-radius: 10px;
     height: 30px;
@@ -514,35 +508,8 @@ input {
     transition: all 0.2s;
 }
 
-#form-main select {
-    cursor: pointer;
-    height: 40px;
-}
-
-#form-main input:focus,
-select:focus {
-    outline: 3px solid rgb(150, 0, 150);
-    outline-offset: -3px;
-}
-
 #form-main #file-upload {
     display: none;
-}
-
-#form-main #file-upload-label {
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    line-height: 40px;
-    height: 40px;
-    width: 100px;
-    border-radius: 10px;
-    border: 2px #808080 solid;
-    transition: all 0.2s;
-}
-
-#form-main #file-upload-label:hover {
-    background-color: rgba(128, 128, 128, 0.3);
 }
 
 #selected-file {

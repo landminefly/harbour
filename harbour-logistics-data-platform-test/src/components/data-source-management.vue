@@ -129,8 +129,13 @@ export default {
         </modifySourcePopUp>
         <div id="data-source-management-title">数据源管理</div>
         <div id="btns-wrapper">
-            <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div>
-            <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</div>
+            <!-- <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div> -->
+            <n-space>
+                <n-button id="create-source-btn" @click="isCreateSourcePopUpShown = true" type="success" size="large" >创建新数据源</n-button>
+                <n-button id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown" type="success" size="large" >{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</n-button>
+            </n-space>
+            
+            <!-- <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</div> -->
         </div>
         <div id="source-form-wrapper">
                 <table id="source-form">
@@ -198,9 +203,10 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 20px;
 }
 
-#btns-wrapper div {
+/* #btns-wrapper div {
     cursor: pointer;
     position: relative;
     margin: 20px;
@@ -212,15 +218,15 @@ export default {
     line-height: 40px;
     text-align: center;
     transition: all 0.2s;
-}
+} */
 
-#btns-wrapper div:hover {
+/* #btns-wrapper div:hover {
     background-color: rgba(128, 128, 128, 0.3);
 }
 
 #source-form-wrapper {
     position: relative;
-}
+} */
 
 #source-form{
     user-select:text;

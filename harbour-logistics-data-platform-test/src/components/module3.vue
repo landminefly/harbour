@@ -1,5 +1,19 @@
+<script>
+
+</script>
+
 <template>
-    <div id="module3">模块3</div>
+  <n-upload
+    action="/api/HLDP/com/admin/upload_file"
+    :headers="{
+      'naive-info': 'hello!'
+    }"
+    :data="{
+      'naive-data': 'cool! naive!'
+    }"
+  >
+    <n-button>上传文件</n-button>
+  </n-upload>
 </template>
 
 <style>

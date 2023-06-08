@@ -366,12 +366,12 @@ body.login::after {
     transform: translateX(-52%) translateY(-50%);
 }
 
-#login-admin-wrapper form span {
+#login-admin-wrapper form>span {
     display: inline-block;
     width: 80px;
 }
 
-#login-admin-wrapper form input {
+#login-admin-wrapper form>input {
     color: #000;
     background-color: #b0b0b0;
     border: 1px rgb(100, 100, 100) solid;
@@ -383,7 +383,7 @@ body.login::after {
     transition: all 0.2s;
 }
 
-#login-admin-wrapper form input.focus {
+#login-admin-wrapper form>input.focus {
     outline: 3px solid rgb(150, 0, 150);
     outline-offset: -3px;
 }
