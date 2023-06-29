@@ -101,7 +101,7 @@ export default {
             this.sourceFormData.pop();
         },
         nextPage() {
-            this.sourceFormData.push([1,'测试测试'])
+            this.sourceFormData.push([1, '测试测试'])
         },
         flush() {
 
@@ -111,7 +111,7 @@ export default {
         //更改黑夜模式
         '$store.state.isDarkMode': {
             handler(newValue) {
-                this.darkModeColor.border = newValue ? '#e1e1e1' : '#213547';
+                this.darkModeColor.border = newValue ? 'rgba(255, 255, 255,0.3)' : 'rgba(0, 0, 0, 0.3)';
             },
             //页面首次加载时初始化
             immediate: true
@@ -131,50 +131,61 @@ export default {
         <div id="btns-wrapper">
             <!-- <div id="create-source-btn" @click="isCreateSourcePopUpShown = true">创建新数据源</div> -->
             <n-space>
-                <n-button id="create-source-btn" @click="isCreateSourcePopUpShown = true" type="success" size="large" >创建新数据源</n-button>
-                <n-button id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown" type="success" size="large" >{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</n-button>
+                <n-button id="create-source-btn" @click="isCreateSourcePopUpShown = true" type="success"
+                    size="large">创建新数据源</n-button>
             </n-space>
-            
+
             <!-- <div id="manage-source-btn" @click="isManageBtnsShown = !isManageBtnsShown">{{isManageBtnsShown === false? '打开' : '关闭'}}数据源管理</div> -->
         </div>
         <div id="source-form-wrapper">
-                <table id="source-form">
-                    <tr>
-                        <td v-for="colName in sourceFormMetaData.colName">
-                            {{ colName }}
-                        </td>
-                    </tr>
+            <table id="source-form">
+                <tr>
+                    <td v-for="colName in sourceFormMetaData.colName" :style="{ borderColor: darkModeColor.border }">
+                        {{ colName }}
+                    </td>
+                    <td :style="{ borderColor: darkModeColor.border }"></td>
+                </tr>
 
-                    <tr v-for="(row, rowIndex) in sourceFormData">
-                        <td v-for="(col, colIndex) in row">{{ colValue(col, colIndex) }}
-                            <Transition>
-                                <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-banshou"
-                                    @click="modifySource(row)"></span>
-                            </Transition>
-                            <Transition>
-                                <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-quxiao"
-                                    @click="deleteSource(row, rowIndex)"></span>
-                            </Transition>
-                            <Transition>
-                                <div id="clickAgainToDelete"
-                                    v-if="colIndex === 0 && isEnsureToDelete === rowIndex"> {{
-                                        isEnsureToDeleteMessage }} </div>
-                            </Transition>
-                        </td>
-                    </tr>
-                </table>
+                <tr v-for="(row, rowIndex) in sourceFormData">
+                    
+                    <td v-for="(col, colIndex) in row" :style="{ borderColor: darkModeColor.border }">{{ colValue(col, colIndex) }}
+                        <!-- <Transition>
+                            <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-banshou"
+                                @click="modifySource(row)"></span>
+                        </Transition>
+                        <Transition>
+
+                            <span v-if="colIndex === 0 && isManageBtnsShown" class="iconfont icon-quxiao"
+                                @click="deleteSource(row, rowIndex)"></span>
+                        </Transition>
+                        <Transition>
+                            <div id="clickAgainToDelete" v-if="colIndex === 0 && isEnsureToDelete === rowIndex"> {{
+                                isEnsureToDeleteMessage }} </div>
+                        </Transition> -->
+                    </td>
+                    
+                    <td :style="{ borderColor: darkModeColor.border }">
+                        <div id="manageBtnsWrapper">
+                            <n-button type="warning"  @click="modifySource(row)">修改</n-button>
+                            <n-button type="error" @click="deleteSource(row, rowIndex)">删除</n-button>
+                            <n-button type="success">同步</n-button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
             <div id="form-btns-wrapper">
                 <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush"></span>
+                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
                 </div>
                 <div id="page-wrapper">
                     <span class="iconfont icon-fanye1" @click="lastPage"></span>
-                    {{ sourceFormMetaData.whichPage }} / {{ sourceFormMetaData.totalPage }} 页
+                    <span>{{ sourceFormMetaData.whichPage }} / {{ sourceFormMetaData.totalPage }} 页</span>
                     <span class="iconfont icon-fanye" @click="nextPage"></span>
                 </div>
             </div>
 
         </div>
+
     </div>
 </template>
 
@@ -192,10 +203,10 @@ export default {
     float: left;
 }
 
-#data-source-management-title{
+#data-source-management-title {
     font-size: 30px;
     font-weight: 900;
-    margin:20px 0;
+    margin: 20px 0;
 }
 
 #btns-wrapper {
@@ -203,7 +214,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 20px;
+    margin: 20px 0;
 }
 
 /* #btns-wrapper div {
@@ -228,50 +239,74 @@ export default {
     position: relative;
 } */
 
-#source-form{
-    user-select:text;
+#source-form {
+    font-size: 18px;
+    user-select: text;
     width: 100%;
     table-layout: fixed;
 }
 
-#source-form tr {
-    border-top: 1px solid;
-    border-bottom: 1px solid;
+#source-form td {
+    border-top: 1px solid ;
+    border-bottom: 1px solid ;
 }
 
 #source-form td:not(:last-child) {
-    border-right: 1px solid;
+    border-right: 1px solid ;
 }
 
 #source-form td {
-    width: 50%;
+    width: 40%;
     text-align: center;
-    padding: 20px;
+    padding: 12px;
     min-width: 100px;
     white-space: nowrap;
+}
+
+#source-form td:last-child {
+    width: 20%;
+}
+
+#source-form tr{
+    position: relative;
+    transition: all 0.2s;
+}
+
+#source-form #manageBtnsWrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-evenly;
 }
 
 #source-form tr:first-child {
     font-size: 20px;
     font-weight: 900;
-    background-color: rgba(16, 63, 145, 0.5);
+    background-color: rgba(120, 120, 120, 0.3)
 }
 
-#source-form tr:nth-child(2n):not(:first-child) {
-    background-color: rgb(128, 128, 128, 0.3);
+#source-form tr:first-child td {
+    padding: 18px;
 }
+
+#source-form tr:not(:first-child):hover {
+    background-color: rgba(180, 180, 180, 0.2)
+}
+
+/* #source-form tr:nth-child(2n):not(:first-child) {
+    background-color: rgb(128, 128, 128, 0.3);
+} */
 
 #form-btns-wrapper {
     height: 40px;
-    margin:20px 30px;
+    margin: 20px 30px;
     display: flex;
     flex-direction: row;
-    justify-content:end;
+    justify-content: end;
 }
 
 #flush-wrapper,
 #page-wrapper {
-    font-size: 20px;
+    font-size: 18px;
     height: 40px;
     padding: 3px 13px;
     margin-left: 10px;
@@ -282,22 +317,22 @@ export default {
 }
 
 #form-btns-wrapper span {
-    font-size: 20px;
+    font-size: 18px;
+    padding: 0 2px;
     display: inline-block;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-#form-btns-wrapper span:hover {
-    transform: scale(1.2);
+#form-btns-wrapper span:not(:nth-child(2)):hover {
+    transform: scale(1.1);
 }
 
-#form-btns-wrapper span:active {
-    transform: scale(1);
+#form-btns-wrapper span:not(:nth-child(2)):active {
+    transform: scale(0.9);
 }
 
-
-#source-form span:nth-child(1) {
+/* #source-form span:nth-child(1) {
     cursor: pointer;
     position: absolute;
     left: 20px;
@@ -341,6 +376,5 @@ export default {
 .v-leave-to {
     opacity: 0;
     transform: translateX(-200%);
-}
-
+} */
 </style>

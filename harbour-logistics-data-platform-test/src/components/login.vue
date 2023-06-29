@@ -138,13 +138,17 @@ export default {
                 <form>
                     <div>
                         <span>用户名：</span>
-                        <input type="text" id="username" :class="{ focus: isUserFormFocus }" v-model="userInput"
-                            @focus="isUserFormFocus = true" @blur="isUserFormFocus = false">
+                        <!-- <input type="text" id="username" :class="{ focus: isUserFormFocus }" v-model="userInput"
+                            @focus="isUserFormFocus = true" @blur="isUserFormFocus = false"> -->
+                        <n-space vertical>
+                            <n-input placeholder="" v-model:value="userInput" id="username" />
+                        </n-space>
                     </div>
                     <div>
                         <span>密码：</span>
-                        <input type="password" id="pwd" :class="{ focus: isPwdFormFocus }" v-model="pwdInput"
-                            @focus="isPwdFormFocus = true" @blur="isPwdFormFocus = false">
+                        <n-space vertical>
+                            <n-input placeholder="" v-model:value="pwdInput" id="pwd" />
+                        </n-space>
                     </div>
                     <div>
                         <button id="submit" @click.prevent="adminLogin"></button>
@@ -366,26 +370,15 @@ body.login::after {
     transform: translateX(-52%) translateY(-50%);
 }
 
-#login-admin-wrapper form>span {
-    display: inline-block;
-    width: 80px;
+#login-admin-wrapper div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items:baseline;
 }
 
-#login-admin-wrapper form>input {
-    color: #000;
-    background-color: #b0b0b0;
-    border: 1px rgb(100, 100, 100) solid;
-    height: 30px;
-    width: 300px;
-    padding: 5px 10px;
-    font-size: 20px;
-    border-radius: 10px;
-    transition: all 0.2s;
-}
-
-#login-admin-wrapper form>input.focus {
-    outline: 3px solid rgb(150, 0, 150);
-    outline-offset: -3px;
+#username,#pwd {
+    width: 250px;
 }
 
 /* 设置提交按钮样式 */

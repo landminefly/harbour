@@ -64,8 +64,8 @@ export default {
     '$store.state.isDarkMode': {
       handler(newValue) {
         this.darkModeColor.header = newValue ? '#103f91' : '#41a5ee';
-        this.darkModeColor.sideBar = newValue ? '#0d1117' : '#9cd7e8';
-        this.darkModeColor.module = newValue ? '#010409' : '#ffffff';
+        this.darkModeColor.sideBar = newValue ? '#18181c' : '#9cd7e8';
+        this.darkModeColor.module = newValue ? '#101014' : '#ffffff';
         this.darkModeColor.font = newValue ? '#e1e1e1' : '#213547';
       },
       //页面首次加载时初始化

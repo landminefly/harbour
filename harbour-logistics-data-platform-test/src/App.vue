@@ -1,4 +1,5 @@
 <script>
+import { darkTheme } from 'naive-ui'
 export default {
   watch: {
     //初始化/更改全局黑夜模式
@@ -30,9 +31,7 @@ export default {
 </script>
 
 <template>
-  <router-view></router-view>
+    <router-view></router-view>
 </template>
 
-<style>
-
-</style>
+<style></style>
