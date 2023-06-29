@@ -289,14 +289,16 @@ export default {
                                         <n-input v-if="form.type === 'input'" v-model:value="form.value" type="text" />
                                     </n-space>
 
-                                    <input v-if="form.type === 'file'" type="file" ref="fileUploadBtn" id="file-upload"
-                                        @change="(e) => form.value = e.target.files[0]" />
-                                    <n-space vertical>
-                                        <n-button v-if="form.type === 'file'" @click="this.$refs.fileUploadBtn[0].click()"
-                                            type="success" size="large">选择文件</n-button>
-                                    </n-space>
-                                    <div v-if="form.type === 'file'" id="selected-file">已选择的文件: {{ form.value ===
-                                        null || undefined ? '无' : form.value.name }}</div>
+                                    <div v-if="form.type === 'file'" id="file-upload-wrapper">
+                                        <input type="file" ref="fileUploadBtn" id="file-upload"
+                                            @change="(e) => form.value = e.target.files[0]" />
+                                        <n-space vertical>
+                                            <n-button @click="this.$refs.fileUploadBtn[0].click()" type="success"
+                                                size="large">选择文件</n-button>
+                                        </n-space>
+                                        <div id="selected-file">已选择的文件: {{ form.value ===
+                                            null || undefined ? '无' : form.value.name }}</div>
+                                    </div>
 
                                     <div v-if="form.type === 'div'">
                                         <p v-for="str in createShowCheckMessage">
@@ -509,13 +511,16 @@ export default {
     display: none;
 }
 
+#file-upload-wrapper{
+    position: relative;
+}
+
 #selected-file {
-    position: absolute;
-    width: 100%;
+    position:absolute;
     text-align: center;
-    top: 60%;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 800px;
+    left:-400px;
+    top: 150%;
 }
 
 #form-main p {

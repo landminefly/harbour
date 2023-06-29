@@ -367,7 +367,7 @@ body.login::after {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translateX(-52%) translateY(-50%);
+    transform: translateX(-55%) translateY(-50%);
 }
 
 #login-admin-wrapper div {
@@ -378,7 +378,7 @@ body.login::after {
 }
 
 #username,#pwd {
-    width: 250px;
+    width: 300px;
 }
 
 /* 设置提交按钮样式 */
@@ -397,7 +397,7 @@ body.login::after {
     color: #010409;
     position: absolute;
     bottom: 30px;
-    right: 120px;
+    right: 110px;
     cursor: pointer;
     transition: all 0.2s;
 }
