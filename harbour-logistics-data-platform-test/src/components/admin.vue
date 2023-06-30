@@ -18,6 +18,14 @@ export default {
   components: {
     darkModeBtn,
   },
+  setup(){
+    //获取浏览器当前打开的模块名（实际上是地址栏从右到左直到第一个'/'为止）
+    var reg = /([^/]+)$/;
+    var result = reg.exec(window.location);
+    return {
+      result
+    }
+  },
   data() {
     return {
       //侧边栏、模块wrapper的高
@@ -28,8 +36,8 @@ export default {
       adminModuleWrapperTransition: 'all 0.3s',
       //是否展开侧边栏
       isSidebarShown: true,
-      //当前选择的模块，默认为source
-      selectedModule: 'source',
+      //当前选择的模块，默认为浏览器当前打开的模块
+      selectedModule: this.result[1],
       //设置导航
       menuOptions: [
         {

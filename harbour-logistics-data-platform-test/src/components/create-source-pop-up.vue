@@ -33,7 +33,6 @@ export default {
                                     [
                                         {
                                             name: '数据源类型', type: 'select', value: null, options: [
-                                                { value: '本地上传', label: '本地上传' },
                                                 { value: 'MySQL数据库', label: 'MySQL数据库' },
                                                 { value: 'HDFS分布式存储', label: 'HDFS分布式存储' },
                                                 { value: 'MinIO分布式存储', label: 'MinIO分布式存储' },
@@ -47,15 +46,7 @@ export default {
                     stepCount: 1, name: '填写数据', color: null, whichConfig: 0, configs:
                         [
                             {
-                                configCount: 0, value: '本地上传', forms:
-                                    [
-                                        {
-                                            name: '上传文件', type: 'file', value: null
-                                        },
-                                    ]
-                            },
-                            {
-                                configCount: 1, value: 'MySQL数据库', forms:
+                                configCount: 0, value: 'MySQL数据库', forms:
                                     [
                                         {
                                             name: 'MySQL路径', type: 'input', value: null
@@ -66,7 +57,7 @@ export default {
                                     ]
                             },
                             {
-                                configCount: 2, value: 'HDFS分布式存储', forms:
+                                configCount: 1, value: 'HDFS分布式存储', forms:
                                     [
                                         {
                                             name: 'HDFS路径', type: 'input', value: null
@@ -77,7 +68,7 @@ export default {
                                     ]
                             },
                             {
-                                configCount: 3, value: 'MinIO分布式存储', forms:
+                                configCount: 2, value: 'MinIO分布式存储', forms:
                                     [
                                         {
                                             name: 'MinIO路径', type: 'input', value: null
@@ -255,8 +246,6 @@ export default {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     } else if (temp[j].type === 'select') {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
-                    } else if (temp[j].type === 'file') {
-                        strArr.push(`${temp[j].name}: ${temp[j].value.name}`)
                     } else if (temp[j].type === 'number') {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     }
@@ -330,18 +319,6 @@ export default {
                                         <n-input class="input" v-if="form.type === 'input'" v-model:value="form.value"
                                             placeholder="请输入" type="text" />
                                     </n-space>
-
-                                    <!-- 文件上传表单 -->
-                                    <div v-if="form.type === 'file'" id="file-upload-wrapper">
-                                        <input type="file" ref="fileUploadBtn" id="file-upload"
-                                            @change="(e) => form.value = e.target.files[0]" />
-                                        <n-space vertical>
-                                            <n-button @click="this.$refs.fileUploadBtn[0].click()" type="success"
-                                                size="large">选择文件</n-button>
-                                        </n-space>
-                                        <div id="selected-file">已选择的文件: {{ form.value ===
-                                            null || undefined ? '无' : form.value.name }}</div>
-                                    </div>
 
                                     <!-- 数字输入表单 -->
                                     <n-space vertical>
@@ -531,23 +508,6 @@ export default {
 #form-main .input,
 #form-main .number {
     width: 250px;
-}
-
-/* 文件上传表单样式 */
-#form-main #file-upload {
-    display: none;
-}
-
-#file-upload-wrapper {
-    position: relative;
-}
-
-#selected-file {
-    position: absolute;
-    text-align: center;
-    width: 800px;
-    left: -400px;
-    top: 150%;
 }
 
 /* 检查信息样式 */

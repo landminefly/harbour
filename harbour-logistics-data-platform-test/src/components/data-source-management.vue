@@ -28,7 +28,7 @@ export default {
             sourceFormMetaData:
             {
                 //每页行数
-                rowCountEachPage: 5,
+                rowCountEachPage: 20,
                 //列名
                 colName: ['数据源类型', '数据源地址', '自动同步间隔(分钟)'],
                 //当前页数
@@ -39,11 +39,9 @@ export default {
             //表数据
             sourceFormData:
                 [
-                    ['本地上传', 'test1.txt', '/'],
                     ['MySQL数据库', 'localhost:3306', '10'],
                     ['HDFS分布式存储', 'localhost:1145', '8'],
                     ['MinIO分布式存储', 'localhost:5140', '60'],
-                    ['本地上传', 'test2.txt', '/'],
                 ]
         }
     },
@@ -124,7 +122,7 @@ export default {
         <!-- 模块功能按钮wrapper -->
         <div id="btns-wrapper">
             <n-space>
-                <n-button id="create-source-btn" @click="createSource()" type="success" size="large">创建新数据源</n-button>
+                <n-button id="create-source-btn" @click="createSource" type="success" size="large">创建新数据源</n-button>
             </n-space>
         </div>
 
@@ -168,14 +166,14 @@ export default {
             <!-- 表格功能按钮wrapper -->
             <div id="form-btns-wrapper">
 
-                <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
-                </div>
-
                 <div id="page-wrapper">
                     <span class="iconfont icon-fanye1" @click="lastPage"></span>
                     <span>{{ sourceFormMetaData.whichPage }} / {{ sourceFormMetaData.totalPage }} 页</span>
                     <span class="iconfont icon-fanye" @click="nextPage"></span>
+                </div>
+
+                <div id="flush-wrapper">
+                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
                 </div>
 
             </div>
@@ -216,7 +214,7 @@ export default {
 
 /* 表格样式 */
 #source-form {
-    font-size: 18px;
+    font-size: 16px;
     user-select: text;
     width: 100%;
     table-layout: fixed;
@@ -234,7 +232,7 @@ export default {
 #source-form td {
     width: 30%;
     text-align: center;
-    padding: 12px;
+    padding: 8px;
     min-width: 100px;
     white-space: nowrap;
 }
@@ -252,14 +250,15 @@ export default {
     position: relative;
     transition: all 0.2s;
 }
+
 #source-form tr:first-child {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     background-color: rgba(120, 120, 120, 0.3)
 }
 
 #source-form tr:first-child td {
-    padding: 18px;
+    padding: 12px;
 }
 
 #source-form tr:not(:first-child):hover {
@@ -276,10 +275,10 @@ export default {
 /* 表格功能按钮样式 */
 #form-btns-wrapper {
     height: 40px;
-    margin: 20px 30px;
+    margin: 20px 20px;
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: start;
 }
 
 #flush-wrapper,
