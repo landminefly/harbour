@@ -1,16 +1,18 @@
+<!-- 确认关闭弹窗组件 -->
 <script>
 export default {
     props: ['readyToClose'],
     emits: ['response'],
     data() {
         return {
+            //黑夜模式颜色
             darkModeColor: {
                 backgroundColor: null,
             }
         }
     },
     watch: {
-        //更改黑夜模式#010409' : '#f0f6fc'
+        //更改黑夜模式
         '$store.state.isDarkMode': {
             handler(newValue) {
                 this.darkModeColor.backgroundColor = newValue ? '#010409' : '#ffffff';
@@ -28,9 +30,6 @@ export default {
             <span>确定要关闭吗？<br>所有未保存的内容都将丢失！</span>
             <br>
             <div id="btns">
-                <!-- <div id="ensure" @click="$emit('response', true)">确认</div>
-                <div id="cancel" @click="$emit('response', false)">取消</div> -->
-
                 <n-space>
                     <n-button id="ensure"
                     @click="$emit('response', true)" type="error" size="large">确认</n-button>

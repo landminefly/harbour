@@ -74,7 +74,7 @@ export default {
         },
         //打开创建弹窗
         createSource() {
-            this.isModifySourcePopUpShown = true;
+            this.isCreateSourcePopUpShown = true;
         },
         //打开修改弹窗，并传入要修改的数据
         modifySource(row) {

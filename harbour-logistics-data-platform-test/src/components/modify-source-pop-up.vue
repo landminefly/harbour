@@ -5,19 +5,25 @@ export default {
         ensureClosePopUp
     },
     props: ['isShown', 'data'],
+    // 向外传递close事件
     emits: ['close'],
     data() {
         return {
+            //准备关闭弹窗
             readyToClose: false,
+            //黑夜模式颜色
             darkModeColor: {
                 popUp: null,
             },
+            //警告提示
             warnShown: {
                 isShown: false,
                 shake: false,
                 warnMsg: null,
             },
+            //当前步骤
             modifyWhichStep: 0,
+            //表单数据
             modifySteps: [
                 {
                     stepCount: 0, name: '更改数据源', color: null, whichConfig: 0, configs:
@@ -100,6 +106,7 @@ export default {
         }
     },
     methods: {
+        // 根据确认关闭弹窗传递出来的参数，来确定是否关闭数据修改弹窗
         closeOrNot(flag) {
             if (flag === true) {
                 this.modifyWhichStep = 0;
@@ -108,6 +115,7 @@ export default {
             }
             this.readyToClose = false;
         },
+        //上一步
         modifyBackOrNot() {
             if (this.modifyWhichStep === 0) {
                 return;
@@ -116,6 +124,7 @@ export default {
                 this.warnShown.isShown = false;
             }
         },
+        //下一步/完成
         modifyNextOrFinish() {
             if (this.modifyWhichStep === this.modifySteps.length - 1) {
                 this.modifySource();
@@ -125,6 +134,7 @@ export default {
                 }
             }
         },
+        //检查表单信息是否为空
         checkModifyContent() {
             var temp = this.modifySteps[this.modifyWhichStep].configs[this.modifySteps[this.modifyWhichStep].whichConfig].forms;
             for (var item of temp) {
@@ -141,6 +151,7 @@ export default {
             if (flag) {
                 this.warnShown.isShown = false;
             } else {
+                //显示警告信息
                 this.warnShown.isShown = true;
                 this.warnShown.warnMsg = '有未完成的选项！'
                 this.setShake();
@@ -148,12 +159,14 @@ export default {
             return flag;
 
         },
+        //设置警告信息shake动画
         setShake() {
             this.warnShown.shake = false;
             setInterval(() => {
                 this.warnShown.shake = true;
             }, 1);
         },
+        //设置当前步骤要展示的表单
         showWhichConfig(step, config) {
             if (this.modifyWhichStep === 0) {
                 step.whichConfig = config.configCount;
@@ -168,6 +181,7 @@ export default {
                 return true;
             }
         },
+        //清除弹窗数据
         clearModifyData() {
             for (var step of this.modifySteps) {
                 for (var config of step.configs) {
@@ -177,6 +191,7 @@ export default {
                 }
             }
         },
+        //向后端请求修改数据
         modifySource() {
             //修改逻辑
             //...
@@ -190,6 +205,7 @@ export default {
         },
     },
     watch: {
+        //更改黑夜模式
         '$store.state.isDarkMode': {
             handler(newValue) {
                 this.darkModeColor.popUp = newValue ? '#0d1117' : '#f6f8fa';
@@ -197,6 +213,7 @@ export default {
             //页面首次加载时初始化
             immediate: true
         },
+        //更改步骤显示颜色
         modifyWhichStep: {
             handler(newValue) {
                 for (var i = 0; i < this.modifySteps.length; i++) {
@@ -210,6 +227,8 @@ export default {
                 }
             }, immediate: true
         },
+        //防止打开弹窗时直接显示警告信息
+        //同时将要修改的数据传递到表单中
         isShown() {
             this.warnShown.isShown = false;
             this.modifySteps[0].configs[0].forms[0].value = this.data[0];
@@ -229,6 +248,7 @@ export default {
         }
     },
     computed: {
+        //设置上一步按钮是否显示及其动画
         modifyBackBtnOpacity() {
             if (this.modifyWhichStep === 0) {
                 return '0';
@@ -242,6 +262,7 @@ export default {
                 return 'visible';
             }
         },
+        //设置检查步骤的信息展示
         modifyShowCheckMessage() {
             var strArr = [];
             for (var i = 0; i < this.modifySteps.length - 1; i++) {
@@ -269,6 +290,7 @@ export default {
 </script>
 
 <template>
+    <!-- 遮罩 -->
     <Transition name="shade">
         <div id="shade" v-if="isShown"></div>
     </Transition>
@@ -276,10 +298,12 @@ export default {
     <Transition name="modify-source-pop-up">
         <div id="modify-source-pop-up" v-if="isShown" :style="{ backgroundColor: darkModeColor.popUp }">
 
+            <!-- 关闭按钮 -->
             <div id="close-modify-source-pop-up-btn" @click="readyToClose = !readyToClose">
                 <span class="iconfont icon-guanbi"></span>
             </div>
 
+            <!-- 上一步/下一步/完成按钮 -->
             <div id="modify-step-btns">
                 <n-space>
                     <n-button id="modify-back-btn"
@@ -293,9 +317,10 @@ export default {
                 </n-space>
             </div>
 
-
+            <!-- 确认关闭弹窗组件 -->
             <ensureClosePopUp :readyToClose="readyToClose" @response="closeOrNot"></ensureClosePopUp>
 
+            <!-- 步骤信息显示 -->
             <div id="modify-source-steps">
                 <div v-for="step in modifySteps" :style="{ backgroundColor: step.color }">
                     {{ step.stepCount + 1 }}
@@ -305,22 +330,28 @@ export default {
                 </div>
             </div>
 
+            <!-- 表单内容 -->
             <template v-for="step in modifySteps">
                 <Transition name="modify-source" mode="out-in">
                     <div id="modify-source-main" v-if="step.stepCount === modifyWhichStep">
                         <template v-for="config in step.configs">
                             <div id="config-main" v-if="showWhichConfig(step, config)">
                                 <div id="form-main" v-for="form in config.forms">
+                                    <!-- 表单标题 -->
                                     <div class="form-title">{{ form.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' }}</div>
+
+                                    <!-- 选择表单 -->
                                     <n-space vertical>
                                         <n-select class="select" v-if="form.type === 'select'" v-model:value="form.value"
                                             :options="form.options" placeholder="请选择" />
                                     </n-space>
 
+                                    <!-- 输入表单 -->
                                     <n-space vertical>
                                         <n-input class="input" v-if="form.type === 'input'" v-model:value="form.value" type="text" placeholder="请输入" />
                                     </n-space>
 
+                                    <!-- 文件上传表单 -->
                                     <div v-if="form.type === 'file'" id="file-upload-wrapper">
                                         <input type="file" ref="fileUploadBtn" id="file-upload"
                                             @change="(e) => form.value = e.target.files[0]" />
@@ -332,11 +363,13 @@ export default {
                                             'string' ? form.value : form.value.name }}</div>
                                     </div>
 
+                                    <!-- 数字输入表单 -->
                                     <n-space vertical>
                                         <n-input-number class="number" v-if="form.type === 'number'"
                                             v-model:value="form.value" placeholder="0为不自动同步" :min="0" :max="65535" />
                                     </n-space>
 
+                                    <!-- 信息检查部分 -->
                                     <div v-if="form.type === 'div'" style="transform: translateY(-12%);">
                                         <p v-for="str in modifyShowCheckMessage">
                                             {{ str }}</p>
@@ -347,16 +380,20 @@ export default {
                     </div>
                 </Transition>
             </template>
+
+            <!-- 警告信息 -->
             <Transition name="modify-warn">
                 <div id="modify-warn" v-if="warnShown.isShown" :class="{ modifyShake: warnShown.shake }">
                     {{ warnShown.warnMsg }}
                 </div>
             </Transition>
+
         </div>
     </Transition>
 </template>
 
 <style>
+/* 遮罩样式及动画 */
 #shade {
     height: 100%;
     width: 100%;
@@ -376,6 +413,7 @@ export default {
     opacity: 0;
 }
 
+/* 弹窗主样式及动画 */
 #modify-source-pop-up {
     height: 700px;
     width: 900px;
@@ -403,6 +441,7 @@ export default {
     opacity: 0;
 }
 
+/* 关闭按钮样式 */
 #close-modify-source-pop-up-btn {
     cursor: pointer;
     width: 50px;
@@ -423,6 +462,7 @@ export default {
     transform: rotate(90deg);
 }
 
+/* 步骤信息样式 */
 #modify-source-steps {
     display: flex;
     flex-direction: row;
@@ -450,6 +490,7 @@ export default {
     top: -5px;
 }
 
+/* 上一步/下一步/完成按钮样式 */
 #modify-step-btns {
     width: 60%;
     display: flex;
@@ -461,6 +502,7 @@ export default {
     bottom: 5%;
 }
 
+/* 表单主样式及动画 */
 #modify-source-main {
     position: absolute;
     top: 20%;
@@ -482,6 +524,58 @@ export default {
     opacity: 0;
 }
 
+#config-main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#form-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#form-main .form-title {
+    font-size: 17px;
+    font-weight: 900;
+    width: 180px;
+    text-align: center;
+}
+
+/* 选择、输入、数字输入表单样式 */
+#form-main .select,
+#form-main .input,
+#form-main .number {
+    width: 250px;
+}
+
+/* 文件上传表单样式 */
+#form-main #file-upload {
+    display: none;
+}
+
+#file-upload-wrapper {
+    position: relative;
+}
+
+#selected-file {
+    position: absolute;
+    text-align: center;
+    width: 800px;
+    left: -400px;
+    top: 150%;
+}
+
+/* 检查信息样式 */
+#form-main p {
+    margin-top: 30px;
+}
+
+/* 警告信息样式 */
 #modify-warn {
     height: 50px;
     width: 300px;
@@ -511,54 +605,6 @@ export default {
 
 #modify-warn.modifyShake {
     animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
-}
-
-#config-main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-#form-main {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-#form-main .form-title {
-    font-size: 17px;
-    font-weight: 900;
-    width: 180px;
-    text-align: center;
-}
-
-#form-main .select,
-#form-main .input,
-#form-main .number {
-    width: 250px;
-}
-
-#form-main #file-upload {
-    display: none;
-}
-
-#file-upload-wrapper {
-    position: relative;
-}
-
-#selected-file {
-    position: absolute;
-    text-align: center;
-    width: 800px;
-    left: -400px;
-    top: 150%;
-}
-
-#form-main p {
-    margin-top: 30px;
 }
 
 @keyframes shake-horizontal {

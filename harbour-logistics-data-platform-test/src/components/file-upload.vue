@@ -1,3 +1,5 @@
+<!-- 临时组件 -->
+
 <script>
 import axios from 'axios';
 export default {

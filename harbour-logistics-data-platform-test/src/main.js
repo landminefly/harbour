@@ -73,7 +73,7 @@ const routes = [
 					return '/cust';
 				case 2:
 					alert("您已经以管理员身份登录，正在为您跳转");
-					return '/admin';
+					return '/admin/source';
 			}
 		},
 	},
@@ -89,7 +89,7 @@ const routes = [
 					return true;
 				case 2:
 					alert("您已经以管理员身份登录，正在为您跳转");
-					return '/admin';
+					return '/admin/source';
 			}
 		},
 	},
