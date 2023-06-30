@@ -12,9 +12,10 @@ export default {
             darkModeColor: {
                 popUp: null,
             },
-            createNullWarnShown: {
+            warnShown: {
                 isShown: false,
                 shake: false,
+                warnMsg: null,
             },
             createWhichStep: 0,
             createSteps: [
@@ -26,10 +27,10 @@ export default {
                                     [
                                         {
                                             name: '数据源类型', type: 'select', value: null, options: [
-                                                { value: 0, label: '本地上传' },
-                                                { value: 1, label: 'MySQL数据库' },
-                                                { value: 2, label: 'HDFS分布式存储' },
-                                                { value: 3, label: 'MinIO分布式存储' },
+                                                { value: '本地上传', label: '本地上传' },
+                                                { value: 'MySQL数据库', label: 'MySQL数据库' },
+                                                { value: 'HDFS分布式存储', label: 'HDFS分布式存储' },
+                                                { value: 'MinIO分布式存储', label: 'MinIO分布式存储' },
                                             ],
                                         },
                                     ]
@@ -40,7 +41,7 @@ export default {
                     stepCount: 1, name: '填写数据', color: null, whichConfig: 0, configs:
                         [
                             {
-                                configCount: 0, forms:
+                                configCount: 0, value: '本地上传', forms:
                                     [
                                         {
                                             name: '上传文件', type: 'file', value: null
@@ -48,33 +49,36 @@ export default {
                                     ]
                             },
                             {
-                                configCount: 1, forms:
+                                configCount: 1, value: 'MySQL数据库', forms:
                                     [
                                         {
                                             name: 'MySQL路径', type: 'input', value: null
-                                        }
+                                        },
+                                        {
+                                            name: '自动同步间隔(分钟)', type: 'number', value: null
+                                        },
                                     ]
                             },
                             {
-                                configCount: 2, forms:
+                                configCount: 2, value: 'HDFS分布式存储', forms:
                                     [
                                         {
                                             name: 'HDFS路径', type: 'input', value: null
                                         },
                                         {
-                                            name: 'HDFS路径', type: 'input', value: null
-                                        },
-                                        {
-                                            name: 'HDFS路径', type: 'input', value: null
+                                            name: '自动同步间隔(分钟)', type: 'number', value: null
                                         },
                                     ]
                             },
                             {
-                                configCount: 3, forms:
+                                configCount: 3, value: 'MinIO分布式存储', forms:
                                     [
                                         {
                                             name: 'MinIO路径', type: 'input', value: null
-                                        }
+                                        },
+                                        {
+                                            name: '自动同步间隔(分钟)', type: 'number', value: null
+                                        },
                                     ]
                             }
                         ]
@@ -109,14 +113,12 @@ export default {
                 return;
             } else {
                 this.createWhichStep -= 1;
-                this.createNullWarnShown.isShown = false;
+                this.warnShown.isShown = false;
             }
         },
         createNextOrFinish() {
             if (this.createWhichStep === this.createSteps.length - 1) {
-                this.createWhichStep = 0;
                 this.createSource();
-                this.$emit('close', true);
             } else {
                 if (this.checkCreateContent()) {
                     this.createWhichStep += 1;
@@ -137,18 +139,19 @@ export default {
                 }
             }
             if (flag) {
-                this.createNullWarnShown.isShown = false;
+                this.warnShown.isShown = false;
             } else {
-                this.createNullWarnShown.isShown = true;
+                this.warnShown.isShown = true;
+                this.warnShown.warnMsg = '有未完成的选项！'
                 this.setShake();
             }
             return flag;
 
         },
         setShake() {
-            this.createNullWarnShown.shake = false;
+            this.warnShown.shake = false;
             setInterval(() => {
-                this.createNullWarnShown.shake = true;
+                this.warnShown.shake = true;
             }, 1);
         },
         showWhichConfig(step, config) {
@@ -156,7 +159,7 @@ export default {
                 step.whichConfig = config.configCount;
                 return true;
             } else if (this.createWhichStep === 1) {
-                if (config.configCount === this.createSteps[0].configs[0].forms[0].value) {
+                if (config.value === this.createSteps[0].configs[0].forms[0].value) {
                     step.whichConfig = config.configCount;
                     return true;
                 }
@@ -177,7 +180,12 @@ export default {
         createSource() {
             //创建逻辑
             //...
-            this.clearCreateData();
+                // this.warnShown.isShown = true;
+                // this.warnShown.warnMsg = '连接失败！'
+                // this.setShake();
+                this.createWhichStep = 0;
+                this.clearCreateData();
+                this.$emit('close', true);
         },
     },
     watch: {
@@ -200,6 +208,9 @@ export default {
                     }
                 }
             }, immediate: true
+        },
+        isShown() {
+            this.warnShown.isShown = false;
         }
     },
     computed: {
@@ -224,9 +235,11 @@ export default {
                     if (temp[j].type === 'input') {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     } else if (temp[j].type === 'select') {
-                        strArr.push(`${temp[j].name}: ${temp[j].options[temp[j].value].label}`)
+                        strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     } else if (temp[j].type === 'file') {
                         strArr.push(`${temp[j].name}: ${temp[j].value.name}`)
+                    } else if (temp[j].type === 'number') {
+                        strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     }
                 }
             }
@@ -281,12 +294,13 @@ export default {
                                 <div id="form-main" v-for="form in config.forms">
                                     <div class="form-title">{{ form.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' }}</div>
                                     <n-space vertical>
-                                        <n-select class="select" v-if="form.type === 'select'" v-model:value="form.value"
+                                        <n-select class="select" v-if="form.type === 'select'" v-model:value="form.value" placeholder="请选择" 
                                             :options="form.options" />
                                     </n-space>
 
                                     <n-space vertical>
-                                        <n-input v-if="form.type === 'input'" v-model:value="form.value" type="text" />
+                                        <n-input class="input" v-if="form.type === 'input'" v-model:value="form.value" placeholder="请输入" 
+                                            type="text" />
                                     </n-space>
 
                                     <div v-if="form.type === 'file'" id="file-upload-wrapper">
@@ -300,6 +314,11 @@ export default {
                                             null || undefined ? '无' : form.value.name }}</div>
                                     </div>
 
+                                    <n-space vertical>
+                                        <n-input-number class="number" v-if="form.type === 'number'"
+                                            v-model:value="form.value" placeholder="0为不自动同步" :min="0" :max="65535" />
+                                    </n-space>
+
                                     <div v-if="form.type === 'div'">
                                         <p v-for="str in createShowCheckMessage">
                                             {{ str }}</p>
@@ -310,10 +329,9 @@ export default {
                     </div>
                 </Transition>
             </template>
-            <Transition name="create-null-warn">
-                <div id="create-null-warn" v-if="createNullWarnShown.isShown"
-                    :class="{ createShake: createNullWarnShown.shake }">
-                    有未完成的选项!
+            <Transition name="create-warn">
+                <div id="create-warn" v-if="warnShown.isShown" :class="{ createShake: warnShown.shake }">
+                    {{ warnShown.warnMsg }}
                 </div>
             </Transition>
         </div>
@@ -446,7 +464,7 @@ export default {
     opacity: 0;
 }
 
-#create-null-warn {
+#create-warn {
     height: 50px;
     width: 300px;
     line-height: 50px;
@@ -463,17 +481,17 @@ export default {
     text-align: center;
 }
 
-.create-null-warn-enter-active,
-.create-null-warn-leave-active {
+.create-warn-enter-active,
+.create-warn-leave-active {
     transition: all 0.2s;
 }
 
-.create-null-warn-enter-from,
-.create-null-warn-leave-to {
+.create-warn-enter-from,
+.create-warn-leave-to {
     opacity: 0;
 }
 
-#create-null-warn.createShake {
+#create-warn.createShake {
     animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
 }
 
@@ -488,38 +506,36 @@ export default {
 #form-main {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: end;
     align-items: center;
 }
 
 #form-main .form-title {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 900;
+    width: 180px;
     text-align: center;
 }
 
-#form-main .select {
-    font-size: 18px;
-    padding: 5px 10px;
-    border-radius: 10px;
-    height: 30px;
-    width: 200px;
-    transition: all 0.2s;
+#form-main .select,
+#form-main .input,
+#form-main .number {
+    width: 250px;
 }
 
 #form-main #file-upload {
     display: none;
 }
 
-#file-upload-wrapper{
+#file-upload-wrapper {
     position: relative;
 }
 
 #selected-file {
-    position:absolute;
+    position: absolute;
     text-align: center;
     width: 800px;
-    left:-400px;
+    left: -400px;
     top: 150%;
 }
 
@@ -554,5 +570,4 @@ export default {
     90% {
         transform: translateX(-8px);
     }
-}
-</style>
+}</style>

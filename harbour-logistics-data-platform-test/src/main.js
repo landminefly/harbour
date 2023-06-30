@@ -9,6 +9,11 @@ import redirect from "./components/redirect.vue";
 import login from "./components/login.vue";
 import admin from "./components/admin.vue";
 import cust from "./components/cust.vue";
+import dataSourceManagement from './components/data-source-management.vue';
+import module2_1 from './components/module2_1.vue';
+import module2_2 from './components/module2_2.vue';
+import module2_3 from './components/module2_3.vue';
+import module3 from './components/module3.vue';
 //导入vuex
 import { createStore } from "vuex";
 //清除默认样式
@@ -91,6 +96,28 @@ const routes = [
 	{
 		path: "/admin",
 		component: admin,
+		children:[
+			{
+				path:'source',
+				component: dataSourceManagement
+			},
+			{
+				path:'data/2_1',
+				component: module2_1
+			},
+			{
+				path:'data/2_2',
+				component: module2_2
+			},
+			{
+				path:'data/2_3',
+				component: module2_3
+			},
+			{
+				path:'analysis',
+				component: module3
+			}
+		],
 		beforeEnter: (to, from) => {
 			switch (store.state.isLogged) {
 				case 0:
@@ -109,14 +136,6 @@ const routes = [
 const router = createRouter({
 	history: createWebHistory(), //使用历史模式
 	routes, // routes: routes 的缩写
-});
-
-//设置全局守卫
-router.beforeEach((to, from) => {
-	if (to.path !== "/" && to.path !== "/admin" && to.path !== "/cust" && to.path !== "/login") {
-		alert("该页面不存在，正在为您重定向");
-		return '/';
-	}
 });
 
 //注册应用

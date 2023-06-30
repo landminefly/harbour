@@ -36,7 +36,7 @@ export default {
         adminLogin() {
 
             this.$store.commit('loginAsAdmin');
-            this.$router.push('/admin');
+            this.$router.push('/admin/source');
 
             // if ((this.userInput = this.userInput.trim()) === '') {
             //     this.isErrorOccur.errorCode = 1;
@@ -138,8 +138,6 @@ export default {
                 <form>
                     <div>
                         <span>用户名：</span>
-                        <!-- <input type="text" id="username" :class="{ focus: isUserFormFocus }" v-model="userInput"
-                            @focus="isUserFormFocus = true" @blur="isUserFormFocus = false"> -->
                         <n-space vertical>
                             <n-input placeholder="" v-model:value="userInput" id="username" />
                         </n-space>

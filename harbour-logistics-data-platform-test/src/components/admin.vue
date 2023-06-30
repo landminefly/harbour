@@ -1,15 +1,21 @@
 <script>
-import DataSourceManagement from './data-source-management.vue';
-import module2_1 from './module2_1.vue';
-import module2_2 from './module2_2.vue';
-import module3 from './module3.vue';
 import darkModeBtn from './dark-mode-btn.vue';
+import { h } from "vue";
+import { RouterLink } from "vue-router";
+//导入图标库以及图标字体
+import { NIcon } from "naive-ui";
+import {
+  Database,
+} from "@vicons/tabler";
+import {
+  Data2,
+} from "@vicons/carbon";
+import {
+  BarChartOutline,
+} from "@vicons/ionicons5";
+
 export default {
   components: {
-    DataSourceManagement,
-    module2_1,
-    module2_2,
-    module3,
     darkModeBtn,
   },
   data() {
@@ -17,14 +23,103 @@ export default {
       //侧边栏、模块wrapper的高
       adminModuleSideHeight: '720px',
       //分别是模块wrapper的宽、动画
-      //在收起、展开侧边栏时需要使用
       adminModuleWrapperWidth: '85%',
+      //在收起、展开侧边栏时需要使用
       adminModuleWrapperTransition: 'all 0.3s',
-      //选择了哪个模块，从1开始
-      selectWhich: 1,
-      showWhich: 1,
       //是否展开侧边栏
       isSidebarShown: true,
+      //当前选择的模块，默认为source
+      selectedModule: 'source',
+      //设置导航
+      menuOptions: [
+        {
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: "/admin/source"
+              }
+            },
+            { default: () => "数据源管理" }
+          ),
+          key: "source",
+          icon: () => h(NIcon, null, { default: () => h(Database) }),
+        },
+        {
+          key: "divider-1",
+          type: "divider",
+          props: {
+            style: {
+              margin: "20px 32px"
+            }
+          }
+        },
+        {
+          label: "数据查看",
+          key: "data",
+          icon: () => h(NIcon, null, { default: () => h(Data2) }),
+          children: [
+            {
+              label: () => h(
+                RouterLink,
+                {
+                  to: {
+                    path: "/admin/data/2_1"
+                  }
+                },
+                { default: () => "2_1数据" }
+              ),
+              key: "2_1",
+            },
+            {
+              label: () => h(
+                RouterLink,
+                {
+                  to: {
+                    path: "/admin/data/2_2"
+                  }
+                },
+                { default: () => "2_2数据" }
+              ),
+              key: "2_2",
+            }, {
+              label: () => h(
+                RouterLink,
+                {
+                  to: {
+                    path: "/admin/data/2_3"
+                  }
+                },
+                { default: () => "2_3数据" }
+              ),
+              key: "2_3",
+            },
+          ]
+        },
+        {
+          key: "divider-2",
+          type: "divider",
+          props: {
+            style: {
+              margin: "20px 32px"
+            }
+          }
+        },
+        {
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: "/admin/analysis"
+              }
+            },
+            { default: () => "数据分析" }
+          ),
+          key: "analysis",
+          icon: () => h(NIcon, null, { default: () => h(BarChartOutline) }),
+        }
+      ],
+      //存储黑夜模式各个布局的颜色
       darkModeColor: {
         header: null,
         sideBar: null,
@@ -64,20 +159,13 @@ export default {
     '$store.state.isDarkMode': {
       handler(newValue) {
         this.darkModeColor.header = newValue ? '#103f91' : '#41a5ee';
-        this.darkModeColor.sideBar = newValue ? '#18181c' : '#9cd7e8';
-        this.darkModeColor.module = newValue ? '#101014' : '#ffffff';
+        this.darkModeColor.sideBar = newValue ? '#18181c' : '#e8f8ff';
+        this.darkModeColor.module = newValue ? '#101014' : '#f4f6f9';
         this.darkModeColor.font = newValue ? '#e1e1e1' : '#213547';
       },
       //页面首次加载时初始化
       immediate: true
     },
-    selectWhich(newValue) {
-      if (newValue === 2) {
-        return;
-      } else {
-        this.showWhich = newValue;
-      }
-    }
   },
   mounted() {
     // 监听视口改变事件
@@ -89,7 +177,6 @@ export default {
     window.removeEventListener('resize', this.updateAdminModuleSideHeight);
   },
 }
-
 </script>
 
 <template>
@@ -117,24 +204,15 @@ export default {
     <Transition name="admin-sidebar">
       <div id="admin-sidebar" v-if="isSidebarShown"
         :style="{ height: adminModuleSideHeight, backgroundColor: darkModeColor.sideBar }">
+        
+        <!-- 收起侧边栏按钮 -->
         <div id="collapse-sidebar-btn" @click="isSidebarShown = false">
           <span>收起侧边栏</span>&nbsp&nbsp&nbsp&nbsp&nbsp<span class="iconfont icon-zuojiantou"></span>
         </div>
-        <div id="module1-nav" @click="selectWhich = 1" :class="{ active: Math.floor(selectWhich) === 1 }">
-          数据源管理
-        </div>
-        <div id="module2-nav" @click="selectWhich = 2" :class="{ active: Math.floor(selectWhich) === 2 }">
-          模块2
-          <span class="iconfont icon-zhankai"></span>
-          <div :style="{ color: darkModeColor.font }" @click.stop="selectWhich = 2.1"
-            :class="{ active: selectWhich === 2.1 }">模块2.1</div>
-          <div :style="{ color: darkModeColor.font }" @click.stop="selectWhich = 2.2"
-            :class="{ active: selectWhich === 2.2 }">模块2.2</div>
-        </div>
 
-        <div id="module3-nav" @click="selectWhich = 3" :class="{ active: Math.floor(selectWhich) === 3 }">
-          模块3
-        </div>
+        <!-- 导航 -->
+        <n-menu id="side-bar" :options="menuOptions" v-model:value="selectedModule" />
+
       </div>
     </Transition>
 
@@ -145,16 +223,15 @@ export default {
       </div>
     </Transition>
 
-    <!-- 模块wrapper -->
-    <div id="admin-module-wrapper"
-      :style="{ height: adminModuleSideHeight, width: adminModuleWrapperWidth, transition: adminModuleWrapperTransition, backgroundColor: darkModeColor.module }">
-      <Transition name="module" mode="out-in">
-        <DataSourceManagement v-if="showWhich === 1"></DataSourceManagement>
-        <module2_1 v-else-if="showWhich === 2.1"></module2_1>
-        <module2_2 v-else-if="showWhich === 2.2"></module2_2>
-        <module3 v-else-if="showWhich === 3"></module3>
-      </Transition>
-    </div>
+    <n-message-provider>
+      <!-- 模块wrapper -->
+      <div id="admin-module-wrapper"
+        :style="{ height: adminModuleSideHeight, width: adminModuleWrapperWidth, transition: adminModuleWrapperTransition, backgroundColor: darkModeColor.module }">
+
+        <router-view></router-view>
+
+      </div>
+    </n-message-provider>
 
   </div>
 </template>
@@ -172,7 +249,6 @@ export default {
 #admin-header {
   height: 80px;
   width: 100%;
-  /* border-bottom: 1px solid; */
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   position: absolute;
@@ -253,112 +329,9 @@ export default {
   z-index: 99;
 }
 
-/* 模块名样式 */
-#admin-sidebar>:not(:first-child) {
-  cursor: pointer;
-  text-align: center;
-  font-size: 20px;
-  line-height: 90px;
-  width: 100%;
-  position: relative;
-  transition: all 0.2s;
-}
-
-#admin-sidebar>:not(:first-child)::after {
-  content: '';
-  position: absolute;
-  display: block;
-  border-bottom: 2px rgba(100, 100, 100, 0.8) solid;
-  width: 80%;
-  left: 10%;
-  top: 70px;
-  transition: all 0.2s;
-}
-
-#admin-sidebar>:not(:first-child).active {
-  font-weight: 900;
-  color: rgba(255, 0, 0, 1);
-}
-
-#admin-sidebar>:not(:first-child).active::after {
-  border-width: 4px;
-  border-color: rgba(255, 0, 0, 1);
-}
-
-#admin-sidebar>:not(:first-child):not(.active):hover {
-  font-weight: 900;
-  color: rgba(128, 0, 128, 0.8);
-}
-
-#admin-sidebar>:not(:first-child):not(.active):hover::after {
-  border-width: 4px;
-  border-color: rgba(128, 0, 128, 0.8);
-}
-
-
-#admin-sidebar>:not(:first-child)>span {
-  display: inline-block;
-  position: absolute;
-  right: 30px;
-  transition: color 0.2s, transform 0.2s;
-  font-size: 15px;
-}
-
-#admin-sidebar>:not(:first-child).active>span {
-  font-weight: 900;
-  color: rgba(255, 0, 0, 1);
-  transform: rotate(180deg);
-}
-
-#admin-sidebar>:not(:first-child):not(.active):hover>span {
-  font-weight: 900;
-  color: rgba(128, 0, 128, 0.8);
-}
-
-#admin-sidebar>:not(:first-child)>div {
-  font-weight: 500;
-  overflow: hidden;
-  height: 0;
-  transition: all 0.3s;
-  line-height: 60px;
-  font-size: 20px;
-  position: relative;
-}
-
-#admin-sidebar>:not(:first-child).active>div {
-  height: 60px;
-}
-
-#admin-sidebar>:not(:first-child)>div::after {
-  content: '';
-  position: absolute;
-  display: block;
-  border-bottom: 2px rgba(100, 100, 100, 0.8) solid;
-  width: 50%;
-  left: 25%;
-  right: 100px;
-  top: 50px;
-  transition: all 0.2s;
-}
-
-#admin-sidebar>:not(:first-child).active>div.active {
-  font-weight: 900;
-  color: rgba(255, 0, 0, 1) !important;
-}
-
-#admin-sidebar>:not(:first-child).active>div.active::after {
-  border-width: 4px;
-  border-color: rgba(255, 0, 0, 1) !important;
-}
-
-#admin-sidebar>:not(:first-child)>div:hover {
-  font-weight: 900;
-  color: rgba(128, 0, 128, 0.8) !important;
-}
-
-#admin-sidebar>:not(:first-child)>div:hover::after {
-  border-width: 4px;
-  border-color: rgba(128, 0, 128, 0.8) !important;
+#side-bar {
+  font-size: 16px;
+  text-align: left;
 }
 
 /* 收起侧边栏按钮样式 */
@@ -425,6 +398,7 @@ export default {
   left: 0;
 }
 
+/* 左侧导航栏展开动画 */
 .expand-sidebar-btn-enter-active {
   transition: all 0.3s 0.3s;
 }
