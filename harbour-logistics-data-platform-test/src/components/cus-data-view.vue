@@ -267,7 +267,6 @@ export default {
     font-size: 16px;
     user-select: text;
     width: 100%;
-    table-layout: fixed;
 }
 
 #cus-form td {

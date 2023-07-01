@@ -170,7 +170,7 @@ export default {
                     <div class="item-title">时间范围</div>
                     <n-space vertical>
                         <n-date-picker class="time" v-model:value="filterData[8]" type="datetimerange" clearable
-                            start-placeholder="开始时间" end-placeholder="结束时间" />
+                            start-placeholder="开始" end-placeholder="结束" />
                     </n-space>
                 </div>
             </div>
@@ -301,7 +301,7 @@ export default {
 #logistics-form {
     font-size: 16px;
     user-select: text;
-    table-layout: fixed;
+    width: 100%;
 }
 
 #logistics-form td {
@@ -314,6 +314,7 @@ export default {
 }
 
 #logistics-form td {
+    min-width: 200px;
     text-align: center;
     padding: 12px;
     min-width: 100px;
@@ -321,6 +322,7 @@ export default {
 }
 
 #logistics-form tr {
+    width: 30%;
     transition: all 0.2s;
 }
 
