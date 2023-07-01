@@ -1,34 +1,36 @@
 <script>
+import { useMessage } from 'naive-ui'
 export default {
+    setup() {
+        //这样就能在setup外使用Message组件
+        window.$message = useMessage()
+    },
     data() {
         return {
-            logisticsFormMetaData:
+            //查找的Message组件
+            messageReactive: null,
+            cusFormMetaData:
             {
                 //每页行数
                 rowCountEachPage: 20,
                 //列名
-                colName: ['提单号', '货主名称', '货主代码', '物流公司', '集装箱箱号', '货物名称', '启运地', '目的地', '始发时间', '到达时间'],
+                colName: ['客户名称', '客户编号', '手机号', '省市区'],
                 //当前页数
                 whichPage: 1,
                 //总页数
                 totalPage: 2,
             },
             //表数据
-            logisticsFormData:
+            cusFormData:
                 [
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
+                    ['区克', '511824199602123275', '14790823638', '江苏省宿迁市'],
+                    ['区克', '511824199602123275', '14790823638', '江苏省宿迁市'],
+                    ['区克', '511824199602123275', '14790823638', '江苏省宿迁市'],
+                    ['区克', '511824199602123275', '14790823638', '江苏省宿迁市'],
+                    ['区克', '511824199602123275', '14790823638', '江苏省宿迁市'],
                 ],
             //筛选器数据
             filterData: [
-                null,
-                null,
-                null,
-                null,
-                null,
                 null,
                 null,
                 null,
@@ -61,7 +63,28 @@ export default {
                     this.filterData[i] = null;
                 }
             }
+
+            //查找前，先创建一个message，显示查找中
+            if (!this.messageReactive) {
+                this.messageReactive = window.$message.loading('查找中', {
+                    duration: 0
+                })
+            }
+
             //查找数据...
+
+            //模拟1秒后找到数据，message改为查找成功，并在1秒后销毁
+            setTimeout(() => {
+
+                this.messageReactive.content = "查找成功";
+                this.messageReactive.type = "success"
+                setTimeout(() => {
+                    this.messageReactive.destroy();
+                    this.messageReactive = null;
+                }, 1000)
+
+            }, 1000);
+
         }
     },
     watch: {
@@ -80,9 +103,9 @@ export default {
 </script>
 
 <template>
-    <div id="logistics-data-wrapper">
+    <div id="cus-data-wrapper">
         <!-- 标题 -->
-        <div id="logistics-data-title">物流信息查看</div>
+        <div id="cus-data-title">客户信息查看</div>
 
         <!-- 筛选器wrapper -->
         <div id="filter-wrapper"
@@ -92,58 +115,27 @@ export default {
             </div>
             <div id="form-wrapper">
                 <div class="form-item">
-                    <div class="item-title">提单号</div>
+                    <div class="item-title">客户名称</div>
                     <n-space vertical>
                         <n-input class="input" placeholder="请输入" v-model:value="filterData[0]" type="text" />
                     </n-space>
                 </div>
                 <div class="form-item">
-                    <div class="item-title">货主名称</div>
+                    <div class="item-title">客户编号</div>
                     <n-space vertical>
                         <n-input class="input" placeholder="请输入" v-model:value="filterData[1]" type="text" />
                     </n-space>
                 </div>
                 <div class="form-item">
-                    <div class="item-title">货主代码</div>
+                    <div class="item-title">手机号</div>
                     <n-space vertical>
                         <n-input class="input" placeholder="请输入" v-model:value="filterData[2]" type="text" />
                     </n-space>
                 </div>
                 <div class="form-item">
-                    <div class="item-title">物流公司</div>
+                    <div class="item-title">省市区</div>
                     <n-space vertical>
                         <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" />
-                    </n-space>
-                </div>
-                <div class="form-item">
-                    <div class="item-title">集装箱箱号</div>
-                    <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[4]" type="text" />
-                    </n-space>
-                </div>
-                <div class="form-item">
-                    <div class="item-title">货物名称</div>
-                    <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[5]" type="text" />
-                    </n-space>
-                </div>
-                <div class="form-item">
-                    <div class="item-title">启运地</div>
-                    <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[6]" type="text" />
-                    </n-space>
-                </div>
-                <div class="form-item">
-                    <div class="item-title">目的地</div>
-                    <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[7]" type="text" />
-                    </n-space>
-                </div>
-                <div class="form-item">
-                    <div class="item-title">时间范围</div>
-                    <n-space vertical>
-                        <n-date-picker class="time" v-model:value="filterData[8]" type="datetimerange" clearable
-                            start-placeholder="开始时间" end-placeholder="结束时间" />
                     </n-space>
                 </div>
             </div>
@@ -157,20 +149,20 @@ export default {
         </div>
 
         <!-- 表格wrapper -->
-        <div id="logistics-form-wrapper">
-            <table id="logistics-form">
+        <div id="cus-form-wrapper">
+            <table id="cus-form">
                 <!-- 表头 -->
                 <tr>
-                    <td v-for="colName in logisticsFormMetaData.colName" :style="{ borderColor: darkModeColor.border }">
+                    <td v-for="colName in cusFormMetaData.colName" :style="{ borderColor: darkModeColor.border }">
                         {{ colName }}
                     </td>
                 </tr>
 
                 <!-- 表格内容 -->
-                <tr v-for="(row, rowIndex) in logisticsFormData">
+                <tr v-for="(row, rowIndex) in cusFormData">
 
                     <td v-for="(col, colIndex) in row" :style="{ borderColor: darkModeColor.border }">{{
-                        this.logisticsFormData[rowIndex][colIndex] }}
+                        this.cusFormData[rowIndex][colIndex] }}
                     </td>
 
                 </tr>
@@ -181,7 +173,7 @@ export default {
 
                 <div id="page-wrapper">
                     <span class="iconfont icon-fanye1" @click="lastPage"></span>
-                    <span>{{ logisticsFormMetaData.whichPage }} / {{ logisticsFormMetaData.totalPage }} 页</span>
+                    <span>{{ cusFormMetaData.whichPage }} / {{ cusFormMetaData.totalPage }} 页</span>
                     <span class="iconfont icon-fanye" @click="nextPage"></span>
                 </div>
 
@@ -196,7 +188,7 @@ export default {
 
 <style>
 /* 模块整体样式 */
-#logistics-data-wrapper {
+#cus-data-wrapper {
     height: 100%;
     width: 100%;
     font-size: 18px;
@@ -210,7 +202,7 @@ export default {
 }
 
 /* 标题样式 */
-#logistics-data-title {
+#cus-data-title {
     font-size: 30px;
     font-weight: 900;
     margin: 20px 0;
@@ -271,43 +263,44 @@ export default {
 }
 
 /* 表格样式 */
-#logistics-form {
+#cus-form {
     font-size: 16px;
     user-select: text;
+    width: 100%;
     table-layout: fixed;
 }
 
-#logistics-form td {
+#cus-form td {
     border-top: 1px solid;
     border-bottom: 1px solid;
 }
 
-#logistics-form td:not(:last-child) {
+#cus-form td:not(:last-child) {
     border-right: 1px solid;
 }
 
-#logistics-form td {
+#cus-form td {
     text-align: center;
     padding: 12px;
     min-width: 100px;
     white-space: nowrap;
 }
 
-#logistics-form tr {
+#cus-form tr {
     transition: all 0.2s;
 }
 
-#logistics-form tr:first-child {
+#cus-form tr:first-child {
     font-size: 18px;
     font-weight: 900;
     background-color: rgba(120, 120, 120, 0.3)
 }
 
-#logistics-form tr:first-child td {
+#cus-form tr:first-child td {
     padding: 12px;
 }
 
-#logistics-form tr:not(:first-child):hover {
+#cus-form tr:not(:first-child):hover {
     background-color: rgba(180, 180, 180, 0.2)
 }
 

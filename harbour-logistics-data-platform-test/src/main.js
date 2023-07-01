@@ -10,10 +10,10 @@ import login from "./components/login.vue";
 import admin from "./components/admin.vue";
 import cust from "./components/cust.vue";
 import dataSourceManagement from './components/data-source-management.vue';
-import module2_1 from './components/module2_1.vue';
-import module2_2 from './components/module2_2.vue';
-import module2_3 from './components/module2_3.vue';
-import module3 from './components/module3.vue';
+import logisticsDataView from './components/logistics-data-view.vue';
+import cusDataView from './components/cus-data-view.vue';
+import companyDataView from './components/company-data-view.vue';
+import dataAnalysis from './components/data-analysis.vue';
 //导入vuex
 import { createStore } from "vuex";
 //清除默认样式
@@ -102,20 +102,20 @@ const routes = [
 				component: dataSourceManagement
 			},
 			{
-				path:'data/2_1',
-				component: module2_1
+				path:'data/logistics',
+				component: logisticsDataView
 			},
 			{
-				path:'data/2_2',
-				component: module2_2
+				path:'data/cus',
+				component: cusDataView
 			},
 			{
-				path:'data/2_3',
-				component: module2_3
+				path:'data/company',
+				component: companyDataView
 			},
 			{
 				path:'analysis',
-				component: module3
+				component: dataAnalysis
 			}
 		],
 		beforeEnter: (to, from) => {

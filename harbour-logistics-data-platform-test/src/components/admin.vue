@@ -72,35 +72,35 @@ export default {
                 RouterLink,
                 {
                   to: {
-                    path: "/admin/data/2_1"
+                    path: "/admin/data/logistics"
                   }
                 },
-                { default: () => "2_1数据" }
+                { default: () => "物流数据" }
               ),
-              key: "2_1",
+              key: "logistics",
             },
             {
               label: () => h(
                 RouterLink,
                 {
                   to: {
-                    path: "/admin/data/2_2"
+                    path: "/admin/data/cus"
                   }
                 },
-                { default: () => "2_2数据" }
+                { default: () => "客户数据" }
               ),
-              key: "2_2",
+              key: "cus",
             }, {
               label: () => h(
                 RouterLink,
                 {
                   to: {
-                    path: "/admin/data/2_3"
+                    path: "/admin/data/company"
                   }
                 },
-                { default: () => "2_3数据" }
+                { default: () => "物流公司数据" }
               ),
-              key: "2_3",
+              key: "company",
             },
           ]
         },
