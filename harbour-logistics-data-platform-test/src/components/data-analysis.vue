@@ -244,11 +244,19 @@ export default {
   position: relative;
 }
 
+/* 图表样式 */
 .chart {
   height: 500px;
   width: 70%;
 }
 
+/* 分割线样式 */
+.divider {
+  height: 500px;
+  border: 1px solid;
+}
+
+/* 图表文本样式 */
 .chart-text {
   height: 500px;
   width: 30%;
@@ -257,10 +265,5 @@ export default {
   text-align: center;
   overflow: auto;
   user-select:text;
-}
-
-.divider {
-  height: 500px;
-  border: 1px solid;
 }
 </style>
