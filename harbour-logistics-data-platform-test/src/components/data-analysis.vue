@@ -9,6 +9,7 @@ export default {
         filterBack: null,
         filterBorder: null,
       },
+      //存储各个表格的数据
       options: [
         {
           tooltip: {
@@ -93,6 +94,10 @@ export default {
           ]
         },
 
+      ],
+      //存储文本中提及的数据
+      text:[
+
       ]
     }
   },
@@ -106,12 +111,6 @@ export default {
       },
       //页面首次加载时初始化
       immediate: true
-    },
-    'this.$refs.wrapper.innerWidth': {
-      handler(newValue) {
-        console.log(newValue)
-        this.charts[0].chart.resize();
-      },
     },
   },
   mounted() {
@@ -154,14 +153,20 @@ export default {
     <!-- 标题 -->
     <div id="company-data-title">数据分析</div>
 
+    <!-- 图表主wrapper -->
     <div class="chart-main-wrapper"
       :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
+      <!-- 图表标题 -->
       <div class="chart-main-title">
         <p>图表1</p>
       </div>
+      <!-- 图表wrapper -->
       <div class="chart-wrapper">
+        <!-- 图表 -->
         <div class="chart" ref="chart_0"></div>
+        <!-- 分割线 -->
         <div class="divider" :style="{ borderColor: darkModeColor.filterBorder }"></div>
+        <!-- 图表文本 -->
         <div class="chart-text">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt temporibus nisi cupiditate dolores adipisci ea
           consequuntur repellendus cumque ducimus harum obcaecati atque libero maiores dignissimos doloribus, suscipit
@@ -251,6 +256,7 @@ export default {
   line-height: 30px;
   text-align: center;
   overflow: auto;
+  user-select:text;
 }
 
 .divider {
