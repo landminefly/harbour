@@ -90,6 +90,13 @@
       "unicode_decimal": 58940
     },
     {
+      "icon_id": "11372776",
+      "name": "叹号",
+      "font_class": "tanhao",
+      "unicode": "e8c6",
+      "unicode_decimal": 59590
+    },
+    {
       "icon_id": "11747495",
       "name": "扳手",
       "font_class": "banshou",

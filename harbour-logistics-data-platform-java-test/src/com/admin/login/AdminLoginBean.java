@@ -1,6 +1,6 @@
 package com.admin.login;
 
-public class AdminLoginInfo {
+public class AdminLoginBean {
     String username;
     String pwd;
 

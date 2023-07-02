@@ -25,7 +25,7 @@ export default {
             //错误框信息
             isErrorOccur: {
                 errorCode: 0,
-                errorMessage: ['', '请输入用户名！', '请输入密码！', '用户名或密码不正确！'],
+                errorMessage: ['', '请输入用户名！', '请输入密码！', '用户名或密码不正确！','服务器错误！'],
                 //shake动画
                 shake: false
             }
@@ -34,41 +34,38 @@ export default {
     methods: {
         //管理员登录验证
         adminLogin() {
-
-            this.$store.commit('loginAsAdmin');
-            this.$router.push('/admin/source');
-
-            // if ((this.userInput = this.userInput.trim()) === '') {
-            //     this.isErrorOccur.errorCode = 1;
-            //     this.setShake();
-            //     return;
-            // } else if ((this.pwdInput = this.pwdInput.trim()) === '') {
-            //     this.isErrorOccur.errorCode = 2;
-            //     this.setShake();
-            //     return;
-            // }
-            // var that = this;
-            // axios({
-            //     method:"POST",
-            //     url:"/api/HLDP/com/admin/login",
-            //     data:{
-            //         //明文传输，不管了XD
-            //         username: this.userInput,
-            //         pwd: this.pwdInput,
-            //     }
-            // }).then(value =>{
-            //     if(value.data === 'success'){
-            //         this.$store.commit('loginAsAdmin');
-            //         this.$router.push('/admin');
-            //     }else if(value.data === 'fail'){
-            //         this.isErrorOccur.errorCode = 3;
-            //         this.setShake();
-            //     }else{
-            //         console.log(value);
-            //     }
-            // }).catch(reason =>{
-            //     console.log(reason);
-            // })
+            if ((this.userInput = this.userInput.trim()) === '') {
+                this.isErrorOccur.errorCode = 1;
+                this.setShake();
+                return;
+            } else if ((this.pwdInput = this.pwdInput.trim()) === '') {
+                this.isErrorOccur.errorCode = 2;
+                this.setShake();
+                return;
+            }
+            var that = this;
+            axios({
+                method:"POST",
+                url:"/api/HLDP/com/admin/login",
+                data:{
+                    //明文传输，不管了XD
+                    username: this.userInput,
+                    pwd: this.pwdInput,
+                }
+            }).then(value =>{
+                if(value.data === 'success'){
+                    this.$store.commit('loginAsAdmin');
+                    this.$router.push('/admin/source');
+                }else if(value.data === 'failure'){
+                    this.isErrorOccur.errorCode = 3;
+                    this.setShake();
+                }else{
+                    console.log(value);
+                }
+            }).catch(reason =>{
+                this.isErrorOccur.errorCode = 4;
+                this.setShake();
+            })
         },
         setShake() {
             this.isErrorOccur.shake = false;
@@ -410,6 +407,7 @@ body.login::after {
 
 /* 设置错误提示框样式 */
 #errorMessage {
+    display: block !important;
     height: 50px;
     width: 250px;
     line-height: 50px;
