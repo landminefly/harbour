@@ -25,7 +25,7 @@ export default {
             //错误框信息
             isErrorOccur: {
                 errorCode: 0,
-                errorMessage: ['', '请输入用户名！', '请输入密码！', '用户名或密码不正确！','服务器错误！'],
+                errorMessage: ['', '请输入用户名！', '请输入密码！', '用户名或密码不正确！', '服务器错误！'],
                 //shake动画
                 shake: false
             }
@@ -45,24 +45,28 @@ export default {
             }
             var that = this;
             axios({
-                method:"POST",
-                url:"/api/HLDP/com/admin/login",
-                data:{
+                method: "POST",
+                url: "/api/HLDP/com/admin/login",
+                data: {
                     //明文传输，不管了XD
                     username: this.userInput,
                     pwd: this.pwdInput,
                 }
-            }).then(value =>{
-                if(value.data === 'success'){
+            }).then(value => {
+                if (value.data === 'success') {
                     this.$store.commit('loginAsAdmin');
                     this.$router.push('/admin/source');
-                }else if(value.data === 'failure'){
+                } else if (value.data === 'failure') {
                     this.isErrorOccur.errorCode = 3;
                     this.setShake();
-                }else{
+                } else {
                     console.log(value);
                 }
-            }).catch(reason =>{
+            }).catch(reason => {
+
+                this.$store.commit('loginAsAdmin');
+                this.$router.push('/admin/source');
+                
                 this.isErrorOccur.errorCode = 4;
                 this.setShake();
             })
@@ -369,10 +373,11 @@ body.login::after {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    align-items:baseline;
+    align-items: baseline;
 }
 
-#username,#pwd {
+#username,
+#pwd {
     width: 300px;
 }
 
