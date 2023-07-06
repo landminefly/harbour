@@ -46,7 +46,7 @@ export default {
             var that = this;
             axios({
                 method: "POST",
-                url: "/api/HLDP/com/admin/login",
+                url: "/api/HLDP/servlet/admin/login",
                 data: {
                     //明文传输，不管了XD
                     username: this.userInput,
@@ -64,8 +64,8 @@ export default {
                 }
             }).catch(reason => {
 
-                this.$store.commit('loginAsAdmin');
-                this.$router.push('/admin/source');
+                // this.$store.commit('loginAsAdmin');
+                // this.$router.push('/admin/source');
                 
                 this.isErrorOccur.errorCode = 4;
                 this.setShake();
