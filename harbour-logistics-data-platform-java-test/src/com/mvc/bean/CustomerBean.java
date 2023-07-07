@@ -63,4 +63,15 @@ public class CustomerBean {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerBean{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", code='" + code + '\'' +
+               ", phone='" + phone + '\'' +
+               ", address='" + address + '\'' +
+               '}';
+    }
 }

@@ -153,4 +153,23 @@ public class UnloadBean {
     public void setDestination(String destination) {
         this.destination = destination;
     }
+
+    @Override
+    public String toString() {
+        return "UnloadBean{" +
+               "id=" + id +
+               ", ship_company='" + ship_company + '\'' +
+               ", ship_name='" + ship_name + '\'' +
+               ", start_time=" + start_time +
+               ", end_time=" + end_time +
+               ", departure_time=" + departure_time +
+               ", arrival_time=" + arrival_time +
+               ", port='" + port + '\'' +
+               ", lading_number='" + lading_number + '\'' +
+               ", container_number='" + container_number + '\'' +
+               ", container_size='" + container_size + '\'' +
+               ", departure='" + departure + '\'' +
+               ", destination='" + destination + '\'' +
+               '}';
+    }
 }

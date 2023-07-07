@@ -146,7 +146,7 @@ export default {
                     <div>
                         <span>密码：</span>
                         <n-space vertical>
-                            <n-input placeholder="" v-model:value="pwdInput" id="pwd" />
+                            <n-input type="password" show-password-on="click" placeholder="" v-model:value="pwdInput" id="pwd" />
                         </n-space>
                     </div>
                     <div>

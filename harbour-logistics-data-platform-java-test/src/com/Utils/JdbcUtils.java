@@ -23,14 +23,14 @@ public class JdbcUtils
     {
         try
         {
-            //数据库操作，暂时不执行
-
-            // //加载配置文件
-            // Properties properties = new Properties();
-            // InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("druid.properties");
-            // properties.load(is);
-            // //使用连接池工厂DruidDataSourceFactory传入配置信息，创建连接池dataSource
-            // dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
+            //加载配置文件
+            Properties properties = new Properties();
+            InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("druid.properties");
+            properties.load(is);
+            //使用连接池工厂DruidDataSourceFactory传入配置信息，创建连接池dataSource
+            dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
+            //设置validationQuery
+            dataSource.setValidationQuery("SELECT 1");
         } catch (Exception e)
         {
             e.printStackTrace();
