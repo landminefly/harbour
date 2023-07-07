@@ -92,7 +92,7 @@ public class Test1 {
 
         try {
             Connection conn = JdbcUtils.getConnection();
-            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\卸货表2022.txt"),conn);
+            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2021.txt"),conn);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

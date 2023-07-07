@@ -1,6 +1,5 @@
 package com.parser.fileSpecificParserImpl;
 
-import com.mvc.DAO.BaseDAO;
 import com.parser.FileSpecificParser;
 import com.parser.enums.TableEnum;
 
@@ -10,8 +9,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -26,18 +26,18 @@ public class FileTxtParser implements FileSpecificParser {
     Pattern compile = Pattern.compile("'(.*?)'");
 
     @Override
-    public void parse(File file,Connection conn) throws IOException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException{
+    public void parse(File file, Connection conn) throws IOException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         //判断文件数据属于哪个表，并更新表枚举属性
         String name = file.getName();
-        if(name.contains("装货表")){
+        if (name.contains("装货表")) {
             tableEnum = TableEnum.LOAD;
-        }else if(name.contains("卸货表")){
+        } else if (name.contains("卸货表")) {
             tableEnum = TableEnum.UNLOAD;
-        }else if(name.contains("物流信息")){
+        } else if (name.contains("物流信息")) {
             tableEnum = TableEnum.LOGISTICS_INFO;
-        }else if(name.contains("物流公司")){
+        } else if (name.contains("物流公司")) {
             tableEnum = TableEnum.LOGISTICS_COMPANY;
-        }else if(name.contains("集装箱动态")){
+        } else if (name.contains("集装箱动态")) {
             tableEnum = TableEnum.CONTAINER_STATUS;
         }
 
@@ -55,52 +55,91 @@ public class FileTxtParser implements FileSpecificParser {
         Object DAO = DAOConstructor.newInstance();
         Method insertBatch = DAOClass.getDeclaredMethod("insertBatch", Connection.class, ArrayList.class);
 
-        //获取缓冲字节输入流，注意编码为GB2312
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GB2312"));
+        //获取缓冲字节输入流，注意编码为GBK
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
         //暂存多个bean，以便统一传入insertBatch方法
         ArrayList<Object> beans = new ArrayList<>();
         //一次读一行，str表示当前读到的内容
         String str = null;
         //略过第一行
         str = bufferedReader.readLine();
-        //
+        //记录当前beans的长度
         int beansLength = 0;
-        while((str = bufferedReader.readLine()) != null) {
+        while ((str = bufferedReader.readLine()) != null) {
+            //对str进行正则匹配
             Matcher matcher = this.compile.matcher(str);
-
+            Matcher matcherNum = Pattern.compile(",(\\d*)$").matcher(str);
+            //新建一个bean对象
             bean = beanClassConstructorconstructor.newInstance();
-            int count = 0;
+
+            //将正则匹配结果赋值给bean中的各个属性
+            int index = 0;
+            //先转到第一个匹配结果
             matcher.find();
             while (true) {
-                if ("id".equals(fields[count].getName())) {
-                    count++;
+
+                //如果遇到自增列，则直接跳过
+                if ("id".equals(fields[index].getName())) {
+                    index++;
                     continue;
                 }
-                Class<?> type = fields[count].getType();
+                //获取当前属性的类型
+                Class<?> type = fields[index].getType();
+                fields[index].setAccessible(true);
+                //如果是非String，则需要进行数据转换
                 if (type == Timestamp.class) {
-                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    DateTimeFormatter formatter = null;
+                    LocalDateTime parse = null;
+                    if (matcher.group(1).contains(" ")) {
+                        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        parse = LocalDateTime.parse(matcher.group(1), formatter);
+                    } else {
+                        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        parse = LocalDate.parse(matcher.group(1), formatter).atStartOfDay();
+                    }
+                    Timestamp timestamp = Timestamp.valueOf(parse);
+                    fields[index].set(bean, timestamp);
+                } else if (type == Date.class) {
+                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     TemporalAccessor parse = dateTimeFormatter.parse(matcher.group(1));
-                    LocalDateTime from = LocalDateTime.from(parse);
-                    Timestamp timestamp = Timestamp.valueOf(from);
-                    fields[count].setAccessible(true);
-                    fields[count].set(bean, timestamp);
-                } else {
-                    fields[count].setAccessible(true);
-                    fields[count].set(bean, matcher.group(1));
+                    LocalDate from = LocalDate.from(parse);
+                    Date date = Date.valueOf(from);
+                    fields[index].set(bean, date);
+                } else if (type == int.class) {
+                    String temp = null;
+                    if (!matcher.hitEnd() && matcher.group(1) != null) {
+                        temp = matcher.group(1);
+                    } else {
+                        matcherNum.find();
+                        temp = matcherNum.group(1);
+                    }
+                    int i = Integer.parseInt(temp);
+                    fields[index].set(bean, i);
                 }
-                count++;
-                if (!matcher.find()) {
+                //如果是String，直接赋值即可
+                else {
+                    fields[index].set(bean, matcher.group(1));
+                }
+
+                //如果所有匹配结果遍历完毕，则退出循环
+                if (index >= fields.length - 1) {
                     break;
+                } else {
+                    matcher.find();
+                    index++;
                 }
             }
+
+            //将赋值好的bean加入beans中
             beans.add(bean);
             beansLength++;
-            if(beansLength == 1000){
-                insertBatch.invoke(DAO,conn,beans);
+
+            //达到一定长度时，将beans传入insertBatch方法，然后清空beans
+            if (beansLength == 1024) {
+                insertBatch.invoke(DAO, conn, beans);
                 beans.clear();
                 beansLength = 0;
             }
         }
-
     }
 }

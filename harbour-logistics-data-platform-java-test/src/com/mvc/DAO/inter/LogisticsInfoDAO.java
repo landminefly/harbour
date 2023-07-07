@@ -1,17 +1,17 @@
 package com.mvc.DAO.inter;
 
 import com.mvc.bean.CustomerBean;
+import com.mvc.bean.LogisticsInfoBean;
+import com.mvc.bean.UnloadBean;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface LogisticsInfoDAO {
-    int update(Connection conn, Object... args) throws SQLException;
 
-    CustomerBean selectForOne(Connection conn, Object... args) throws SQLException;
+    int insert(Connection conn, LogisticsInfoBean logisticsInfoBean) throws SQLException;
 
-    List<CustomerBean> selectForMulti(Connection conn, Object... args) throws SQLException;
-
-    <E> E getValue(Connection conn, Object... args) throws SQLException;
+    int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException;
 }

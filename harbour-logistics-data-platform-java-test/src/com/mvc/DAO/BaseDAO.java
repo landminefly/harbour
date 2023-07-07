@@ -28,11 +28,13 @@ public class BaseDAO<T> {
         clazz = (Class<T>) actualTypeArguments[0];
     }
 
-
+    /**
+     * @return 返回每条语句分别影响的记录条数
+     * @Description 实现批量的增删改操作
+     */
     public int[] batch(Connection conn, String sql, Object[][] args) throws SQLException {
         return queryRunner.batch(conn, sql, args);
     }
-
 
     /**
      * @return 返回影响的记录条数
