@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -92,9 +93,17 @@ public class Test1 {
 
         try {
             Connection conn = JdbcUtils.getConnection();
-            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2021.txt"),conn);
+            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\集装箱动态2021.csv"),conn);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+        // DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // LocalDateTime localDateTime = LocalDateTime.parse("2023-07-07 23:50:00", formatter1);
+        //
+        // DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // LocalDate localDate = LocalDate.parse("2023-07-07", formatter2);
+
     }
 }

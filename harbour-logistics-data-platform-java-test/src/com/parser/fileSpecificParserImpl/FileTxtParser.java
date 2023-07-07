@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +22,7 @@ public class FileTxtParser implements FileSpecificParser {
     //表枚举属性
     TableEnum tableEnum = null;
     //正则规则
-    Pattern compile = Pattern.compile("'(.*?)'");
+    Pattern compile = Pattern.compile("(?<=^|',)(.*?)(?=,'|,\\d|$)");
 
     @Override
     public void parse(File file, Connection conn) throws IOException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
@@ -68,7 +67,6 @@ public class FileTxtParser implements FileSpecificParser {
         while ((str = bufferedReader.readLine()) != null) {
             //对str进行正则匹配
             Matcher matcher = this.compile.matcher(str);
-            Matcher matcherNum = Pattern.compile(",(\\d*)$").matcher(str);
             //新建一个bean对象
             bean = beanClassConstructorconstructor.newInstance();
 
@@ -77,7 +75,12 @@ public class FileTxtParser implements FileSpecificParser {
             //先转到第一个匹配结果
             matcher.find();
             while (true) {
-
+                //将当前匹配结果赋值给split
+                String split = matcher.group(1);
+                //如果含有单引号，则去掉
+                if(split.contains("'")){
+                    split = split.replace("'","");
+                }
                 //如果遇到自增列，则直接跳过
                 if ("id".equals(fields[index].getName())) {
                     index++;
@@ -90,43 +93,34 @@ public class FileTxtParser implements FileSpecificParser {
                 if (type == Timestamp.class) {
                     DateTimeFormatter formatter = null;
                     LocalDateTime parse = null;
-                    if (matcher.group(1).contains(" ")) {
+                    if (split.contains(" ")) {
                         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        parse = LocalDateTime.parse(matcher.group(1), formatter);
+                        parse = LocalDateTime.parse(split, formatter);
                     } else {
+                        //这是只有年月日，没有时分秒的情况，需要先格式化为LocalDate，然后再转化为LocalDateTime
                         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        parse = LocalDate.parse(matcher.group(1), formatter).atStartOfDay();
+                        parse = LocalDate.parse(split, formatter).atStartOfDay();
                     }
                     Timestamp timestamp = Timestamp.valueOf(parse);
                     fields[index].set(bean, timestamp);
                 } else if (type == Date.class) {
-                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    TemporalAccessor parse = dateTimeFormatter.parse(matcher.group(1));
-                    LocalDate from = LocalDate.from(parse);
-                    Date date = Date.valueOf(from);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate parse = LocalDate.parse(split, formatter);
+                    Date date = Date.valueOf(parse);
                     fields[index].set(bean, date);
                 } else if (type == int.class) {
-                    String temp = null;
-                    if (!matcher.hitEnd() && matcher.group(1) != null) {
-                        temp = matcher.group(1);
-                    } else {
-                        matcherNum.find();
-                        temp = matcherNum.group(1);
-                    }
-                    int i = Integer.parseInt(temp);
+                    int i = Integer.parseInt(split);
                     fields[index].set(bean, i);
                 }
                 //如果是String，直接赋值即可
                 else {
-                    fields[index].set(bean, matcher.group(1));
+                    fields[index].set(bean, split);
                 }
 
-                //如果所有匹配结果遍历完毕，则退出循环
-                if (index >= fields.length - 1) {
+                index++;
+                //如果所有属性均被赋值，则退出循环
+                if (!matcher.find()) {
                     break;
-                } else {
-                    matcher.find();
-                    index++;
                 }
             }
 

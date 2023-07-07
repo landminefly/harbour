@@ -25,6 +25,7 @@ public class ContainerStatusDAOImpl extends BaseDAO<ContainerStatusBean> impleme
                             containerStatusBean.getPort(),
                             containerStatusBean.getContainer_number(),
                             containerStatusBean.getSize(),
+                            containerStatusBean.getStatus(),
                             containerStatusBean.getLading_number(),
                             containerStatusBean.getYard(),
                             containerStatusBean.getOperation(),
@@ -48,13 +49,14 @@ public class ContainerStatusDAOImpl extends BaseDAO<ContainerStatusBean> impleme
                     containerStatusBean.getPort(),
                     containerStatusBean.getContainer_number(),
                     containerStatusBean.getSize(),
+                    containerStatusBean.getStatus(),
                     containerStatusBean.getLading_number(),
                     containerStatusBean.getYard(),
                     containerStatusBean.getOperation(),
                     containerStatusBean.getDate()
             };
         }
-        String sql = "INSERT INTO CONTAINER_STATUS VALUES (?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO CONTAINER_STATUS VALUES (?,?,?,?,?,?,?,?,?)";
         return super.batch(conn, sql, objects);
     }
 }

@@ -12,23 +12,26 @@ public class ContainerStatusBean {
     private String container_number;
     //箱尺寸
     private int size;
+    //箱状态 0表示空箱 1表示重箱 -1表示未知
+    private int status;
     //提单号
     private String lading_number;
     //堆场位置
     private String yard;
     //操作，0表示出库，1表示入库
-    private String operation;
+    private int operation;
     //操作日期
     private Date date;
 
     public ContainerStatusBean() {
     }
 
-    public ContainerStatusBean(int id, String port, String container_number, int size, String lading_number, String yard, String operation, Date date) {
+    public ContainerStatusBean(int id, String port, String container_number, int size, int status, String lading_number, String yard, int operation, Date date) {
         this.id = id;
         this.port = port;
         this.container_number = container_number;
         this.size = size;
+        this.status = status;
         this.lading_number = lading_number;
         this.yard = yard;
         this.operation = operation;
@@ -67,6 +70,14 @@ public class ContainerStatusBean {
         this.size = size;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getLading_number() {
         return lading_number;
     }
@@ -83,11 +94,11 @@ public class ContainerStatusBean {
         this.yard = yard;
     }
 
-    public String getOperation() {
+    public int getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(int operation) {
         this.operation = operation;
     }
 
