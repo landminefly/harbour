@@ -23,7 +23,7 @@ public class FileParser {
             throw new RuntimeException("不支持该格式文件的解析！");
         }
 
-        this.fileEnum.getSp().parse(file,conn);
+        this.fileEnum.getSpecificParser().parse(file, conn);
     }
 
 }

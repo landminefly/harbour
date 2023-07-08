@@ -10,13 +10,13 @@ public enum FileEnum {
     XLSX(new FileXlsxParser()),
     CSV(new FileCsvParser());
 
-    private final FileSpecificParser sp;
+    private final FileSpecificParser specificParser;
 
-    FileEnum(FileSpecificParser sp) {
-        this.sp = sp;
+    FileEnum(FileSpecificParser specificParser) {
+        this.specificParser = specificParser;
     }
 
-    public FileSpecificParser getSp() {
-        return sp;
+    public FileSpecificParser getSpecificParser() {
+        return specificParser;
     }
 }
