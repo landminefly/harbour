@@ -28,6 +28,13 @@ public class Test1 {
 
     public static void main(String[] args) throws SQLException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
+        try {
+            Connection conn = JdbcUtils.getConnection();
+            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2022.txt"),conn);
+        } catch (IOException | InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
+
         // Connection conn = JdbcUtils.getConnection();
         // QueryRunner queryRunner = new QueryRunner();
         // List<CustomerBean> list = queryRunner.query(conn, "SELECT * FROM CUSTOMER;", new BeanListHandler<>(CustomerBean.class));
@@ -91,15 +98,7 @@ public class Test1 {
         // System.out.println(unloadBean);
         // new QueryRunner().update(connection,"INSERT INTO UNLOAD VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",unloadBean.getId(),unloadBean.getShip_company(),unloadBean.getShip_name(),unloadBean.getStart_time(),unloadBean.getEnd_time(),unloadBean.getDeparture_time(),unloadBean.getArrival_time(),unloadBean.getPort(),unloadBean.getLading_number(),unloadBean.getContainer_number(),unloadBean.getContainer_size(),unloadBean.getDeparture(),unloadBean.getDestination());
         // connection.close();
-
-        try {
-            Connection conn = JdbcUtils.getConnection();
-            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2022.txt"),conn);
-        } catch (IOException | InvalidFormatException e) {
-            throw new RuntimeException(e);
-        }
-
-
+        //
         // DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         // LocalDateTime localDateTime = LocalDateTime.parse("2023-07-07 23:50:00", formatter1);
         //
