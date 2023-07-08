@@ -19,10 +19,11 @@ public class LogisticsCompanyDAOImpl extends BaseDAO<LogisticsCompanyBean> imple
      */
     @Override
     public int insert(Connection conn, LogisticsCompanyBean logisticsCompanyBean) throws SQLException {
-        String sql = "INSERT INTO LOGISTICS_COMPANY VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO LOGISTICS_COMPANY VALUES (?,?,?,?,?,?)";
         return super.update(conn, sql,
                             logisticsCompanyBean.getId(),
                             logisticsCompanyBean.getName(),
+                            logisticsCompanyBean.getCode(),
                             logisticsCompanyBean.getPerson(),
                             logisticsCompanyBean.getPhone(),
                             logisticsCompanyBean.getAddress()
@@ -37,18 +38,19 @@ public class LogisticsCompanyDAOImpl extends BaseDAO<LogisticsCompanyBean> imple
     @Override
     public int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException {
         //将beans中各个bean的参数分别放入objects二维数组中
-        Object[][] objects = new Object[1024][];
+        Object[][] objects = new Object[beans.size()][];
         for (int i = 0; i < objects.length; i++) {
             LogisticsCompanyBean logisticsCompanyBean = (LogisticsCompanyBean) beans.get(i);
             objects[i] = new Object[]{
                     logisticsCompanyBean.getId(),
                     logisticsCompanyBean.getName(),
+                    logisticsCompanyBean.getCode(),
                     logisticsCompanyBean.getPerson(),
                     logisticsCompanyBean.getPhone(),
                     logisticsCompanyBean.getAddress()
             };
         }
-        String sql = "INSERT INTO LOGISTICS_COMPANY VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO LOGISTICS_COMPANY VALUES (?,?,?,?,?,?)";
         return super.batch(conn, sql, objects);
     }
 }

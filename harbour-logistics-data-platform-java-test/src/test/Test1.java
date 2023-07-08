@@ -6,6 +6,7 @@ import com.mvc.bean.UnloadBean;
 import com.parser.FileParser;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,8 +94,8 @@ public class Test1 {
 
         try {
             Connection conn = JdbcUtils.getConnection();
-            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\集装箱动态2021.csv"),conn);
-        } catch (IOException e) {
+            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2022.txt"),conn);
+        } catch (IOException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
 

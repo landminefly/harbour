@@ -41,7 +41,7 @@ public class ContainerStatusDAOImpl extends BaseDAO<ContainerStatusBean> impleme
     @Override
     public int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException {
         //将beans中各个bean的参数分别放入objects二维数组中
-        Object[][] objects = new Object[1024][];
+        Object[][] objects = new Object[beans.size()][];
         for (int i = 0; i < objects.length; i++) {
             ContainerStatusBean containerStatusBean = (ContainerStatusBean) beans.get(i);
             objects[i] = new Object[]{
