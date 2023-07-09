@@ -1,5 +1,5 @@
 //导入vue-router
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 //导入vue
 import { createApp } from "vue";
 //导入根组件
@@ -22,8 +22,6 @@ import "./assets/reset.css";
 import "./assets/main.css";
 //导入vuex-persist持久化插件
 import VuexPersistence from 'vuex-persist'
-
-import naive from 'naive-ui'
 
 //设置vuex-persist
 const vuexLocal = new VuexPersistence({
@@ -134,7 +132,7 @@ const routes = [
 ];
 
 const router = createRouter({
-	history: createWebHistory(), //使用历史模式
+	history: createWebHashHistory(), //使用历史模式
 	routes, // routes: routes 的缩写
 });
 
@@ -144,7 +142,5 @@ const app = createApp(App);
 app.use(router);
 //注册vuex
 app.use(store);
-
-app.use(naive);
 //挂载
 app.mount("#app");

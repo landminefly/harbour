@@ -1,5 +1,28 @@
 <script>
-import * as echarts from 'echarts';
+
+//按需引入图表组件
+import * as echarts from 'echarts/core';
+import {
+  ToolboxComponent,
+  TooltipComponent,
+  GridComponent,
+  LegendComponent
+} from 'echarts/components';
+import { BarChart } from 'echarts/charts';
+import { CanvasRenderer } from 'echarts/renderers';
+import { LineChart } from 'echarts/charts';
+import { UniversalTransition } from 'echarts/features';
+echarts.use([
+  ToolboxComponent,
+  TooltipComponent,
+  GridComponent,
+  LegendComponent,
+  BarChart,
+  CanvasRenderer,
+  LineChart,
+  UniversalTransition
+]);
+
 export default {
   data() {
     return {

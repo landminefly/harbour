@@ -63,12 +63,9 @@ export default {
                     console.log(value);
                 }
             }).catch(reason => {
-
-                // this.$store.commit('loginAsAdmin');
-                // this.$router.push('/admin/source');
-                
                 this.isErrorOccur.errorCode = 4;
                 this.setShake();
+                return;
             })
         },
         setShake() {
