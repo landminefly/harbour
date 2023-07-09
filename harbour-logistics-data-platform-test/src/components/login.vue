@@ -46,7 +46,7 @@ export default {
             var that = this;
             axios({
                 method: "POST",
-                url: "/api/HLDP/servlet/admin/login",
+                url: "/api/hldp/servlet/admin/login",
                 data: {
                     //明文传输，不管了XD
                     username: this.userInput,
