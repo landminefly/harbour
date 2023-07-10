@@ -1,13 +1,13 @@
 package com.admin.view;
 
-public class LogisticsViewServletBean {
+public class ViewServletBean {
     private Object[] originArgs;
     private long pageNum;
 
-    public LogisticsViewServletBean() {
+    public ViewServletBean() {
     }
 
-    public LogisticsViewServletBean(Object[] originArgs, long pageNum) {
+    public ViewServletBean(Object[] originArgs, long pageNum) {
         this.originArgs = originArgs;
         this.pageNum = pageNum;
     }

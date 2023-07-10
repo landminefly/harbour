@@ -35,11 +35,11 @@ public class LogisticsView extends HttpServlet {
         while ((temp = reader.readLine()) != null) {
             sb.append(temp);
         }
-        LogisticsViewServletBean logisticsViewServletBean = new Gson().fromJson(sb.toString(), LogisticsViewServletBean.class);
+        ViewServletBean viewServletBean = new Gson().fromJson(sb.toString(), ViewServletBean.class);
 
         //解析数据
-        Object[] originArgs = logisticsViewServletBean.getOriginArgs();
-        long pageNum = logisticsViewServletBean.getPageNum();
+        Object[] originArgs = viewServletBean.getOriginArgs();
+        long pageNum = viewServletBean.getPageNum();
         //存储各筛选条件
         String[] args = new String[12];
         //普通的数据直接加入即可
@@ -51,7 +51,7 @@ public class LogisticsView extends HttpServlet {
                 args[argsIndex] = (String) originArgs[argsIndex];
             }
         }
-        //前端传来的时间筛选条件是一个数组，将时间戳转换为DM8支持的格式后再加入
+        //前端传来的时间筛选条件是一个数组，将数组中的时间戳拿出来后再转换为DM8支持的格式
         for(int i = 8; i<=9; i++){
             ArrayList<Double> tempList = (ArrayList<Double>) originArgs[i];
             if(tempList == null){
@@ -72,10 +72,13 @@ public class LogisticsView extends HttpServlet {
             }
         }
 
-        LogisticsInfoViewServer LogisticsInfoViewServer = new LogisticsInfoViewServer();
-        List<LogisticsInfoViewBean> results = LogisticsInfoViewServer.query((Connection) req.getAttribute("conn"), args, pageNum);
-        long count = LogisticsInfoViewServer.queryCount((Connection) req.getAttribute("conn"), args, pageNum);
+        //执行api的查询方法
+        LogisticsInfoViewServer logisticsInfoViewServer = new LogisticsInfoViewServer();
+        List<LogisticsInfoViewBean> results = logisticsInfoViewServer.query((Connection) req.getAttribute("conn"), args, pageNum);
+        long count = logisticsInfoViewServer.queryCount((Connection) req.getAttribute("conn"), args, pageNum);
 
+        //将得到的封装对象中的各个属性单独拿出来，按照前端页面的数据格式放入一个数组中
+        //多个封装对象对应多个数组，最终得到一个二维数组
         String[][] resultsArr = new String[results.size()+1][];
         for(int i = 0; i<resultsArr.length-1; i++){
             LogisticsInfoViewBean result = results.get(i);
@@ -93,11 +96,12 @@ public class LogisticsView extends HttpServlet {
             resultData[9] = dateTimeFormatter.format(result.getArrival_time().toLocalDateTime());
             resultsArr[i] = resultData;
         }
-
+        //二维数组的最后要预留一个位置，用来存放查询到的记录条数
         resultsArr[resultsArr.length-1] = new String[]{Long.toString(count)};
+
+        //格式化后响应给前端
         Gson gson = new Gson();
         String arrayJson = gson.toJson(resultsArr);
-
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
 

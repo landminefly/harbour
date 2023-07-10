@@ -1,35 +1,26 @@
-package com.mvc.bean;
+package com.api.viewBean;
 
-//客户信息
-public class CustomerBean {
-    //客户id，自增列
-    private int id;
-    //客户名称
+public class LogisticsCompanyViewBean {
+    //物流公司名称
     private String name;
-    //客户身份证号
+    //客户编号
     private String code;
-    //客户手机号
+    //联系人
+    private String person;
+    //手机号
     private String phone;
-    //客户地址
+    //地址
     private String address;
 
-    public CustomerBean() {
+    public LogisticsCompanyViewBean() {
     }
 
-    public CustomerBean(int id, String name, String code, String phone, String address) {
-        this.id = id;
+    public LogisticsCompanyViewBean(String name, String code, String person, String phone, String address) {
         this.name = name;
         this.code = code;
+        this.person = person;
         this.phone = phone;
         this.address = address;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -46,6 +37,14 @@ public class CustomerBean {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getPerson() {
+        return person;
+    }
+
+    public void setPerson(String person) {
+        this.person = person;
     }
 
     public String getPhone() {

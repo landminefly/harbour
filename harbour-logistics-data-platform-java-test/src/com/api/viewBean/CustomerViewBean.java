@@ -1,9 +1,6 @@
-package com.mvc.bean;
+package com.api.viewBean;
 
-//客户信息
-public class CustomerBean {
-    //客户id，自增列
-    private int id;
+public class CustomerViewBean {
     //客户名称
     private String name;
     //客户身份证号
@@ -13,23 +10,14 @@ public class CustomerBean {
     //客户地址
     private String address;
 
-    public CustomerBean() {
+    public CustomerViewBean() {
     }
 
-    public CustomerBean(int id, String name, String code, String phone, String address) {
-        this.id = id;
+    public CustomerViewBean(String name, String code, String phone, String address) {
         this.name = name;
         this.code = code;
         this.phone = phone;
         this.address = address;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -63,4 +51,5 @@ public class CustomerBean {
     public void setAddress(String address) {
         this.address = address;
     }
+
 }
