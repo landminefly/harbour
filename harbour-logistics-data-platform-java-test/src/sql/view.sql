@@ -1,0 +1,204 @@
+-- 模块1 港口的吞吐量分析
+
+CREATE VIEW IMPORT_THROUGHPUT AS -- 港口总进口数据分析
+SELECT u.PORT AS PORT,SUM(li.WEIGHT) AS IMPORT_WEIGHT -- 港口名，总进口货物质量总和
+FROM UNLOAD u JOIN LOGISTICS_INFORMATION li -- 连接查询
+                   ON u.LADING_NUMBER = li.LADING_NUMBER -- 查询条件为提单号相等
+GROUP BY u.PORT -- 分组
+ORDER BY u.PORT; -- 排序
+
+
+CREATE VIEW EXPORT_THROUGHPUT AS -- 港口总出口数据分析
+SELECT l.PORT AS PORT,SUM(li.WEIGHT) AS EXPORT_WEIGHT -- 港口名，总出口货物质量总和
+FROM LOAD l JOIN LOGISTICS_INFORMATION li -- 连接查询
+                 ON l.LADING_NUMBER = li.LADING_NUMBER -- 查询条件为提单号相等
+GROUP BY l.PORT -- 分组
+ORDER BY l.PORT; -- 排序
+
+
+CREATE VIEW TOTAL_THROUGHPUT AS -- 港口吞吐量数据分析
+SELECT
+    i.PORT,
+    i.IMPORT_WEIGHT,
+    e.EXPORT_WEIGHT,
+    i.IMPORT_WEIGHT + e.EXPORT_WEIGHT AS TOTAL_WEIGHT -- 港口名，总进口货物质量总和，总出口货物重量总和，吞吐量总和
+FROM IMPORT_THROUGHPUT i JOIN EXPORT_THROUGHPUT e -- 连接查询
+                              ON i.PORT = e.PORT -- 查询条件为港口相等
+ORDER BY i.PORT; -- 排序
+
+-- 模块2 港口不同类型货物吞吐趋势
+
+CREATE VIEW EXPORT_TREND AS -- 各港口货物出口量趋势
+SELECT
+    l.PORT,
+    li.CARGO,
+        YEAR(l.START_TIME) AS YEAR,
+        MONTH(l.START_TIME) AS MONTH,
+        SUM(li.WEIGHT) AS EXPORT_WEIGHT
+        FROM
+        LOAD l
+        JOIN
+        LOGISTICS_INFORMATION li ON l.LADING_NUMBER = li.LADING_NUMBER
+        GROUP BY
+        YEAR(l.START_TIME),
+        MONTH(l.START_TIME),
+        l.PORT,
+        li.CARGO
+        ORDER BY
+        l.PORT,
+        li.CARGO,
+        YEAR(l.START_TIME),
+        MONTH(l.START_TIME);
+
+
+CREATE VIEW IMPORT_TREND AS -- 各港口货物进口量趋势
+SELECT
+    u.PORT,
+    li.CARGO,
+        YEAR(u.START_TIME) AS YEAR,
+        MONTH(u.START_TIME) AS MONTH,
+        SUM(li.WEIGHT) AS IMPORT_WEIGHT
+        FROM
+        UNLOAD u
+        JOIN
+        LOGISTICS_INFORMATION li ON u.LADING_NUMBER = li.LADING_NUMBER
+        GROUP BY
+        YEAR(u.START_TIME),
+        MONTH(u.START_TIME),
+        u.PORT,
+        li.CARGO
+        ORDER BY
+        u.PORT,
+        li.CARGO,
+        YEAR(u.START_TIME),
+        MONTH(u.START_TIME);
+
+
+CREATE VIEW TOTAL_TREND AS -- 各港口货物吞吐量趋势
+SELECT
+    e.PORT,
+    e.CARGO,
+    e.YEAR,
+    e.MONTH,
+    e.EXPORT_WEIGHT + i.IMPORT_WEIGHT AS TOTAL_WEIGHT
+FROM EXPORT_TREND e JOIN IMPORT_TREND i
+                         ON e.PORT = i.PORT AND e.CARGO = i.CARGO AND e.YEAR = i.YEAR AND e.MONTH = i.MONTH
+ORDER BY
+    e.PORT,
+    e.CARGO,
+    e.YEAR,
+    e.MONTH;
+
+
+-- 模块3 港口货物吞吐同比环比
+
+CREATE VIEW EXPORT_TIME_TREND AS -- 各港口出口数据
+SELECT
+    l.PORT,
+        YEAR(l.START_TIME) AS YEAR,
+        MONTH(l.START_TIME) AS MONTH,
+        SUM(li.WEIGHT) AS EXPORT_WEIGHT
+        FROM
+        LOAD l
+        JOIN
+        LOGISTICS_INFORMATION li ON l.LADING_NUMBER = li.LADING_NUMBER
+        GROUP BY
+        YEAR(l.START_TIME),
+        MONTH(l.START_TIME),
+        l.PORT
+        ORDER BY
+        l.PORT,
+        YEAR(l.START_TIME),
+        MONTH(l.START_TIME);
+
+
+CREATE VIEW IMPORT_TIME_TREND AS -- 各港口进口数据
+SELECT
+    e.PORT,
+        YEAR(e.START_TIME) AS YEAR,
+        MONTH(e.START_TIME) AS MONTH,
+        SUM(li.WEIGHT) AS IMPORT_WEIGHT
+        FROM
+        UNLOAD e
+        JOIN
+        LOGISTICS_INFORMATION li ON e.LADING_NUMBER = li.LADING_NUMBER
+        GROUP BY
+        YEAR(e.START_TIME),
+        MONTH(e.START_TIME),
+        e.PORT
+        ORDER BY
+        e.PORT,
+        YEAR(e.START_TIME),
+        MONTH(e.START_TIME);
+
+
+CREATE VIEW TOTAL_TIME_TREND AS -- 各港口吞吐量数据
+SELECT i.PORT,i.YEAR,i.MONTH,
+       i.IMPORT_WEIGHT + e.EXPORT_WEIGHT AS TOTAL_WEIGHT
+FROM IMPORT_TIME_TREND i JOIN SYSDBA.EXPORT_TIME_TREND e
+                              ON i.PORT = e.PORT AND i.YEAR = e.YEAR AND i.MONTH = e.MONTH
+ORDER BY
+    i.PORT,
+    i.YEAR,
+    i.MONTH;
+
+CREATE VIEW TOTAL_TIME_COMPARE AS -- 港口货物吞吐同比环比
+SELECT
+    PORT, -- 港口名称
+        YEAR, -- 年份
+        MONTH, -- 月份
+        TOTAL_WEIGHT, -- 货物总重量
+        (CAST(TOTAL_WEIGHT AS FLOAT) - LAG(CAST(TOTAL_WEIGHT AS FLOAT), 1) OVER (PARTITION BY PORT ORDER BY YEAR, MONTH)) /
+        LAG(CAST(TOTAL_WEIGHT AS FLOAT), 1) OVER (PARTITION BY PORT ORDER BY YEAR, MONTH) AS MONTHLY_GROWTH_RATE, -- 环比增长率（月份）
+        (CAST(TOTAL_WEIGHT AS FLOAT) - LAG(CAST(TOTAL_WEIGHT AS FLOAT), 12) OVER (PARTITION BY PORT ORDER BY YEAR, MONTH)) /
+        LAG(CAST(TOTAL_WEIGHT AS FLOAT), 12) OVER (PARTITION BY PORT ORDER BY YEAR, MONTH) AS YEARLY_GROWTH_RATE -- 同比增长率（年份）
+        FROM
+        TOTAL_TIME_TREND;
+
+-- 模块4 不同货物吞吐占比
+
+CREATE VIEW PORT_CARGO_RATIO AS -- 不同货物吞吐占比
+SELECT
+    PORT, -- 港口名称
+    CARGO, -- 货物类型
+    SUM(TOTAL_WEIGHT) AS TOTAL_WEIGHT, -- 货物总重量
+    CAST(SUM(TOTAL_WEIGHT) AS FLOAT) / CAST(SUM(SUM(TOTAL_WEIGHT)) OVER (PARTITION BY PORT) AS FLOAT)
+                      AS WEIGHT_PERCENTAGE -- 货物吞吐占比
+FROM
+    TOTAL_TREND
+GROUP BY
+    PORT,
+    CARGO;
+
+
+-- 模块5 不同货物流向分析
+
+CREATE VIEW CARGO_FLOW_RATIO AS -- 不同货物流向分析
+SELECT
+    CARGO, -- 货物类型
+    PORT, -- 港口名称
+    SUM(IMPORT_WEIGHT) AS WEIGHT, -- 该港口货物总重量
+    CAST(SUM(IMPORT_WEIGHT) AS FLOAT) / CAST(SUM(SUM(IMPORT_WEIGHT)) OVER (PARTITION BY CARGO) AS FLOAT) AS WEIGHT_PERCENTAGE -- 货物流向占比
+FROM
+    IMPORT_TREND
+GROUP BY
+    CARGO,
+    PORT;
+
+
+-- 模块6 不同类型货物堆场流转周期分析
+
+CREATE VIEW YARD_TIME AS -- 不同类型货物堆场流转周期分析
+SELECT
+    LI.CARGO AS CARGO, -- 货物
+    AVG(DATEDIFF(day, I.DATE, O.DATE)) AS AVERAGE_TIME -- 平均流转周期
+FROM
+    CONTAINER_STATUS AS O -- 出仓记录
+        JOIN CONTAINER_STATUS AS I ON O.CONTAINER_NUMBER = I.CONTAINER_NUMBER
+        AND O.LADING_NUMBER = I.LADING_NUMBER AND O.DATE > I.DATE -- 对应的进仓记录
+        JOIN LOGISTICS_INFORMATION AS LI ON O.LADING_NUMBER = LI.LADING_NUMBER -- 货物信息
+WHERE
+        O.OPERATION = 1 -- 出仓操作
+  AND I.OPERATION = 0 -- 进仓操作
+GROUP BY
+    LI.CARGO;
