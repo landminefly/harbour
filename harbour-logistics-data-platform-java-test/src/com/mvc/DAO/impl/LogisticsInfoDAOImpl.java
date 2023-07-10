@@ -2,9 +2,7 @@ package com.mvc.DAO.impl;
 
 import com.mvc.DAO.BaseDAO;
 import com.mvc.DAO.inter.LogisticsInfoDAO;
-import com.mvc.bean.CustomerBean;
 import com.mvc.bean.LogisticsInfoBean;
-import com.mvc.bean.UnloadBean;
 
 import java.sql.Connection;
 import java.sql.SQLException;

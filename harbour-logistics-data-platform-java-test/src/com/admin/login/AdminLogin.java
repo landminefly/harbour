@@ -12,6 +12,9 @@ import java.io.IOException;
 
 @WebServlet("/servlet/admin/login")
 public class AdminLogin extends HttpServlet {
+    /**
+     * 处理管理员登录请求
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");
@@ -21,7 +24,7 @@ public class AdminLogin extends HttpServlet {
         while ((temp = reader.readLine()) != null) {
             sb.append(temp);
         }
-        AdminLoginBean info = new Gson().fromJson(sb.toString(), AdminLoginBean.class);
+        AdminLoginServletBean info = new Gson().fromJson(sb.toString(), AdminLoginServletBean.class);
 
         resp.setCharacterEncoding("utf-8");
         resp.setContentType("text/plain;charset=utf8");

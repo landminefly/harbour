@@ -1,39 +1,23 @@
 package test;
 
-import com.Utils.JdbcUtils;
-import com.mvc.bean.CustomerBean;
-import com.mvc.bean.UnloadBean;
-import com.parser.FileParser;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Test1 {
 
     public static void main(String[] args) throws SQLException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        try {
-            Connection conn = JdbcUtils.getConnection();
-            new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2022.txt"),conn);
-        } catch (IOException | InvalidFormatException e) {
-            throw new RuntimeException(e);
-        }
+            // Connection conn = JdbcUtils.getConnection();
+            // LogisticsInfoViewDAOImpl logisticsInfoViewDAOImpl = new LogisticsInfoViewDAOImpl();
+            // List<LogisticsInfoViewBean> query = logisticsInfoViewDAOImpl.query(conn, (String) null);
+            // System.out.println(query.size());
+
+        // try {
+        //     Connection conn = JdbcUtils.getConnection();
+        //     new FileParser().parse(new File("C:\\Users\\leili\\Desktop\\File\\装货表2022.txt"),conn);
+        // } catch (IOException | InvalidFormatException e) {
+        //     throw new RuntimeException(e);
+        // }
 
         // Connection conn = JdbcUtils.getConnection();
         // QueryRunner queryRunner = new QueryRunner();

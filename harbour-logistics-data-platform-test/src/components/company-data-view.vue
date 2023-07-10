@@ -1,5 +1,6 @@
 <script>
 import { useMessage } from 'naive-ui'
+import axios from 'axios'
 export default {
     setup() {
         //这样就能在setup外使用Message组件
@@ -21,15 +22,8 @@ export default {
                 totalPage: 2,
             },
             //表数据
-            companyFormData:
-                [
-                    ['宜昌裕丰国际物流有限公司', '91510403JU739CKEP2','资廷', '17245317381', '内蒙古自治区乌兰察布市'],
-                    ['宜昌裕丰国际物流有限公司', '91510403JU739CKEP2','资廷', '17245317381', '内蒙古自治区乌兰察布市'],
-                    ['宜昌裕丰国际物流有限公司', '91510403JU739CKEP2','资廷', '17245317381', '内蒙古自治区乌兰察布市'],
-                    ['宜昌裕丰国际物流有限公司', '91510403JU739CKEP2','资廷', '17245317381', '内蒙古自治区乌兰察布市'],
-                    ['宜昌裕丰国际物流有限公司', '91510403JU739CKEP2','资廷', '17245317381', '内蒙古自治区乌兰察布市'],
-                ],
-            //筛选器数据
+            companyFormData: null,
+            //筛选器数据，专门给查询按钮使用
             filterData: [
                 null,
                 null,
@@ -37,6 +31,8 @@ export default {
                 null,
                 null,
             ],
+            //上一次点击查询时的筛选器数据，专门给上一页、下一页、刷新按钮使用
+            filterDataForPage: null,
             //存储黑夜模式各个布局的颜色
             darkModeColor: {
                 border: null,
@@ -47,24 +43,116 @@ export default {
     },
     methods: {
         lastPage() {
-            //返回上一页数据
+            if (this.companyFormMetaData.whichPage <= 1) {
+                window.$message.error('已经是第一页了', {
+                    duration: 1000
+                });
+                return;
+            }
+
+            //查数据前先禁止上一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.lastPageBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/company",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: this.companyFormMetaData.whichPage - 1,
+                }
+            }).then(value => {
+                //响应数据是一个二维数组，最后一个元素保存了查询到的总记录数，其余元素都是一个记录
+                var length = value.data.length;
+                //处理数据
+                this.companyFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.companyFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复上一页按钮的点击事件
+                this.$refs.lastPageBtn.style.pointerEvents = "";
+                //更新whichPage值
+                this.companyFormMetaData.whichPage = this.companyFormMetaData.whichPage - 1;
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         nextPage() {
-            //返回下一页数据
+            if (this.companyFormMetaData.whichPage >= this.companyFormMetaData.totalPage) {
+                window.$message.error('已经是最后一页了', {
+                    duration: 1000
+                });
+                return;
+            }
+
+            //查数据前先禁止下一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.nextPageBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/company",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: this.companyFormMetaData.whichPage + 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //处理数据
+                this.companyFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.companyFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复上一页的点击事件
+                this.$refs.nextPageBtn.style.pointerEvents = "";
+                //更新whichPage值
+                this.companyFormMetaData.whichPage = this.companyFormMetaData.whichPage + 1;
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         flush() {
-            //刷新数据
+            //查数据前先禁止刷新按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.flushBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/company",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //处理数据
+                this.companyFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.companyFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复刷新的点击事件
+                this.$refs.flushBtn.style.pointerEvents = "";
+
+                //更新页数
+                if (Number(value.data[length - 1][0] == 0)) {
+                    this.companyFormMetaData.whichPage = 0;
+                } else {
+                    this.companyFormMetaData.whichPage = 1;
+                }
+
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         //向后端发送查找请求
         seekData() {
-            //先将空字符串转为null
-            for (var i = 0; i < this.filterData.length; i++) {
+             //先将空字符串转为null
+             for (var i = 0; i < this.filterData.length; i++) {
                 var item = this.filterData[i];
                 if (typeof (item) === "string" && (item = item.trim()) === '') {
                     this.filterData[i] = null;
                 }
             }
-
             //查找前，先创建一个message，显示查找中
             if (!this.messageReactive) {
                 this.messageReactive = window.$message.loading('查找中', {
@@ -72,21 +160,75 @@ export default {
                 })
             }
 
+            //查数据前先禁止查找按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.seekBtn.style.pointerEvents = "none";
+            //更新filterDataForPage
+            this.filterDataForPage = [...this.filterData];
             //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/company",
+                data: {
+                    originArgs: this.filterData,
+                    pageNum: 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //更新数据
+                this.companyFormData = value.data.slice(0, length - 1);
+                //更新页数
+                this.companyFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //更新whichPage值
+                this.companyFormMetaData.whichPage = 1;
+                //恢复查找的点击事件
+                this.$refs.seekBtn.style.pointerEvents = "";
 
-            //模拟1秒后找到数据，message改为查找成功，并在1秒后销毁
-            setTimeout(() => {
-
-                this.messageReactive.content = "查找成功";
-                this.messageReactive.type = "success"
+                //更新message信息
+                if (Number(value.data[length - 1][0] == 0)) {
+                    this.companyFormMetaData.whichPage = 0;
+                    this.messageReactive.content = `没有找到符合条件的数据！`;
+                    this.messageReactive.type = "error";
+                } else {
+                    this.messageReactive.content = `共找到${Number(value.data[length - 1][0])}条数据`;
+                    this.messageReactive.type = "success"
+                }
                 setTimeout(() => {
-                    this.messageReactive.destroy();
+                    this.messageReactive?.destroy();
                     this.messageReactive = null;
                 }, 1000)
 
-            }, 1000);
-
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         }
+    },
+    mounted() {
+        //加载该模块时要先初始化数据
+        //初始化filterDataForPage
+        this.filterDataForPage = [...this.filterData];
+        axios({
+            method: "POST",
+            url: "/api/hldp/servlet/view/company",
+            data: {
+                originArgs: this.filterData,
+                pageNum: 1,
+            }
+        }).then(value => {
+            var length = value.data.length;
+            //初始化数据
+            this.companyFormData = value.data.slice(0, length - 1);
+            //初始化页数
+            this.companyFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+            //更新whichPage值
+            this.companyFormMetaData.whichPage = 1;
+
+        }).catch(reason => {
+            window.$message.error('服务器错误！', {
+                duration: 2000
+            });
+        })
     },
     watch: {
         //更改黑夜模式
@@ -118,36 +260,36 @@ export default {
                 <div class="form-item">
                     <div class="item-title">公司名称</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[0]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[0]" type="text" clearable/>
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">客户编号</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[1]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[1]" type="text" clearable/>
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">联系人</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[2]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[2]" type="text" clearable/>
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">电话</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" clearable/>
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">省市区</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" clearable/>
                     </n-space>
                 </div>
             </div>
 
-            <div id="submit-btn">
+            <div id="submit-btn" ref="seekBtn">
                 <n-button type="success" size="large" @click="seekData">
                     查找
                 </n-button>
@@ -179,13 +321,13 @@ export default {
             <div id="form-btns-wrapper">
 
                 <div id="page-wrapper">
-                    <span class="iconfont icon-fanye1" @click="lastPage"></span>
+                    <span class="iconfont icon-fanye1" @click="lastPage" ref="lastPageBtn"></span>
                     <span>{{ companyFormMetaData.whichPage }} / {{ companyFormMetaData.totalPage }} 页</span>
-                    <span class="iconfont icon-fanye" @click="nextPage"></span>
+                    <span class="iconfont icon-fanye" @click="nextPage" ref="nextPageBtn"></span>
                 </div>
 
                 <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
+                    <span class="iconfont icon-shuaxin" @click="flush" ref="flushBtn"> 刷新</span>
                 </div>
 
             </div>

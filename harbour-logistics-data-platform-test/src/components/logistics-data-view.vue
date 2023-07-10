@@ -1,5 +1,6 @@
 <script>
 import { useMessage } from 'naive-ui'
+import axios from 'axios'
 export default {
     setup() {
         //这样就能在setup外使用Message组件
@@ -16,20 +17,13 @@ export default {
                 //列名
                 colName: ['提单号', '货主名称', '货主代码', '物流公司', '集装箱箱号', '货物名称', '启运地', '目的地', '始发时间', '到达时间'],
                 //当前页数
-                whichPage: 1,
+                whichPage: 0,
                 //总页数
-                totalPage: 2,
+                totalPage: 0,
             },
             //表数据
-            logisticsFormData:
-                [
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                    ['TKNG2924820', '区克', '511824199602123275', '乾宇国际货运代理有限公司', 'YWCM8054', '大豆粉', '苏州港', '铜陵港', '2022-10-05 19:44:49', '2022-10-09 16:44:49'],
-                ],
-            //筛选器数据
+            logisticsFormData: null,
+            //筛选器数据，专门给查询按钮使用
             filterData: [
                 null,
                 null,
@@ -40,7 +34,10 @@ export default {
                 null,
                 null,
                 null,
+                null,
             ],
+            //上一次点击查询时的筛选器数据，专门给上一页、下一页、刷新按钮使用
+            filterDataForPage: null,
             //存储黑夜模式各个布局的颜色
             darkModeColor: {
                 border: null,
@@ -51,13 +48,106 @@ export default {
     },
     methods: {
         lastPage() {
-            //返回上一页数据
+            if (this.logisticsFormMetaData.whichPage <= 1) {
+                window.$message.error('已经是第一页了', {
+                    duration: 1000
+                });
+                return;
+            }
+
+            //查数据前先禁止上一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.lastPageBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/logistics",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: this.logisticsFormMetaData.whichPage - 1,
+                }
+            }).then(value => {
+                //响应数据是一个二维数组，最后一个元素保存了查询到的总记录数，其余元素都是一个记录
+                var length = value.data.length;
+                //处理数据
+                this.logisticsFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复上一页按钮的点击事件
+                this.$refs.lastPageBtn.style.pointerEvents = "";
+                //更新whichPage值
+                this.logisticsFormMetaData.whichPage = this.logisticsFormMetaData.whichPage - 1;
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         nextPage() {
-            //返回下一页数据
+            if (this.logisticsFormMetaData.whichPage >= this.logisticsFormMetaData.totalPage) {
+                window.$message.error('已经是最后一页了', {
+                    duration: 1000
+                });
+                return;
+            }
+
+            //查数据前先禁止下一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.nextPageBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/logistics",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: this.logisticsFormMetaData.whichPage + 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //处理数据
+                this.logisticsFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复上一页的点击事件
+                this.$refs.nextPageBtn.style.pointerEvents = "";
+                //更新whichPage值
+                this.logisticsFormMetaData.whichPage = this.logisticsFormMetaData.whichPage + 1;
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         flush() {
-            //刷新数据
+            //查数据前先禁止刷新按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.flushBtn.style.pointerEvents = "none";
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/logistics",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //处理数据
+                this.logisticsFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //恢复刷新的点击事件
+                this.$refs.flushBtn.style.pointerEvents = "";
+
+                //更新whichPage值
+                if (Number(value.data[length - 1][0] == 0)) {
+                    this.logisticsFormMetaData.whichPage = 0;
+                } else {
+                    this.logisticsFormMetaData.whichPage = 1;
+                }
+
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         },
         //向后端发送查找请求
         seekData() {
@@ -68,7 +158,6 @@ export default {
                     this.filterData[i] = null;
                 }
             }
-
             //查找前，先创建一个message，显示查找中
             if (!this.messageReactive) {
                 this.messageReactive = window.$message.loading('查找中', {
@@ -76,20 +165,75 @@ export default {
                 })
             }
 
+            //查数据前先禁止查找按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
+            this.$refs.seekBtn.style.pointerEvents = "none";
+            //更新filterDataForPage
+            this.filterDataForPage = [...this.filterData];
             //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/logistics",
+                data: {
+                    originArgs: this.filterData,
+                    pageNum: 1,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //更新数据
+                this.logisticsFormData = value.data.slice(0, length - 1);
+                //更新页数
+                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+                //更新whichPage值
+                this.logisticsFormMetaData.whichPage = 1;
+                //恢复查找的点击事件
+                this.$refs.seekBtn.style.pointerEvents = "";
 
-            //模拟1秒后找到数据，message改为查找成功，并在1秒后销毁
-            setTimeout(() => {
-
-                this.messageReactive.content = "查找成功";
-                this.messageReactive.type = "success"
+                //更新message信息
+                if (Number(value.data[length - 1][0] == 0)) {
+                    this.logisticsFormMetaData.whichPage = 0;
+                    this.messageReactive.content = `没有找到符合条件的数据！`;
+                    this.messageReactive.type = "error";
+                } else {
+                    this.messageReactive.content = `共找到${Number(value.data[length - 1][0])}条数据`;
+                    this.messageReactive.type = "success"
+                }
                 setTimeout(() => {
-                    this.messageReactive.destroy();
+                    this.messageReactive?.destroy();
                     this.messageReactive = null;
                 }, 1000)
 
-            }, 1000);
+            }).catch(reason => {
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
         }
+    },
+    mounted() {
+        //加载该模块时要先初始化数据
+        //初始化filterDataForPage
+        this.filterDataForPage = [...this.filterData];
+        axios({
+            method: "POST",
+            url: "/api/hldp/servlet/view/logistics",
+            data: {
+                originArgs: this.filterData,
+                pageNum: 1,
+            }
+        }).then(value => {
+            var length = value.data.length;
+            //初始化数据
+            this.logisticsFormData = value.data.slice(0, length - 1);
+            //初始化页数
+            this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+            //更新whichPage值
+            this.logisticsFormMetaData.whichPage = 1;
+
+        }).catch(reason => {
+            window.$message.error('服务器错误！', {
+                duration: 2000
+            });
+        })
     },
     watch: {
         //更改黑夜模式
@@ -121,61 +265,68 @@ export default {
                 <div class="form-item">
                     <div class="item-title">提单号</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[0]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[0]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">货主名称</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[1]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[1]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">货主代码</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[2]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[2]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">物流公司</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">集装箱箱号</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[4]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[4]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">货物名称</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[5]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[5]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">启运地</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[6]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[6]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
                     <div class="item-title">目的地</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[7]" type="text" />
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[7]" type="text" clearable />
                     </n-space>
                 </div>
                 <div class="form-item">
-                    <div class="item-title">时间范围</div>
+                    <div class="item-title">始发时间</div>
                     <n-space vertical>
                         <n-date-picker class="time" v-model:value="filterData[8]" type="datetimerange" clearable
                             start-placeholder="开始" end-placeholder="结束" />
                     </n-space>
                 </div>
+                <div class="form-item">
+                    <div class="item-title">到达时间</div>
+                    <n-space vertical>
+                        <n-date-picker class="time" v-model:value="filterData[9]" type="datetimerange" clearable
+                            start-placeholder="开始" end-placeholder="结束" />
+                    </n-space>
+                </div>
             </div>
 
-            <div id="submit-btn">
+            <div id="submit-btn" ref="seekBtn">
                 <n-button type="success" size="large" @click="seekData">
                     查找
                 </n-button>
@@ -207,13 +358,13 @@ export default {
             <div id="form-btns-wrapper">
 
                 <div id="page-wrapper">
-                    <span class="iconfont icon-fanye1" @click="lastPage"></span>
+                    <span class="iconfont icon-fanye1" @click="lastPage" ref="lastPageBtn"></span>
                     <span>{{ logisticsFormMetaData.whichPage }} / {{ logisticsFormMetaData.totalPage }} 页</span>
-                    <span class="iconfont icon-fanye" @click="nextPage"></span>
+                    <span class="iconfont icon-fanye" @click="nextPage" ref="nextPageBtn"></span>
                 </div>
 
                 <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
+                    <span class="iconfont icon-shuaxin" @click="flush" ref="flushBtn"> 刷新</span>
                 </div>
 
             </div>
