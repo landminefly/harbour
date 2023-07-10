@@ -197,6 +197,12 @@ export default {
         <div id="admin-title">什么什么系统</div>
       </div>
 
+      <div id="admin-welcome">
+        你好，管理员
+      </div>
+      <div class="header-divider">
+      </div>
+
       <div id="admin-dark-mode-btn-wrapper">
         <div>
           <darkModeBtn></darkModeBtn>
@@ -307,7 +313,7 @@ export default {
 }
 
 #admin-logout-label:active {
-  transform: translateY(-50%) scale(0.9);
+  transform: translateY(-50%) scale(1);
 }
 
 /* 黑夜模式按钮样式 */
@@ -320,6 +326,21 @@ export default {
   position: absolute;
   top: 20px;
   transform: scale(0.6);
+}
+
+/* 欢迎语样式 */
+#admin-welcome{
+  height: 80px;
+  line-height: 80px;
+  margin:0 10px;
+  font-size: 16px;
+}
+
+/* 头部分割线样式 */
+.header-divider{
+  height: 30px;
+  border: 1px solid #2f658e;
+  margin: 25px 5px;
 }
 
 /* 以下为左侧导航栏样式 */

@@ -82,7 +82,7 @@ export default {
         //顾客直接登录
         cusLogin() {
             this.$store.commit('loginAsCust');
-            this.$router.push('/cust');
+            this.$router.push('/cust/data/logistics');
         }
     },
     watch: {

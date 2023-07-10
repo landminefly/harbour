@@ -202,14 +202,19 @@ export default {
                 });
             })
         },
-        clearData(){
-            this.filterData.forEach((item,index,arr) =>{
+        clearData() {
+            this.filterData.forEach((item, index, arr) => {
                 arr[index] = null;
             })
         }
     },
     mounted() {
         //加载该模块时要先初始化数据
+        if (!this.messageReactive) {
+            this.messageReactive = window.$message.loading('加载中', {
+                duration: 0
+            })
+        }
         //初始化filterDataForPage
         this.filterDataForPage = [...this.filterData];
         axios({
@@ -228,6 +233,8 @@ export default {
             //更新whichPage值
             this.cusFormMetaData.whichPage = 1;
 
+            this.messageReactive?.destroy();
+            this.messageReactive = null;
         }).catch(reason => {
             window.$message.error('服务器错误！', {
                 duration: 2000
@@ -412,7 +419,7 @@ export default {
     width: 0;
     display: flex;
     flex-direction: row;
-    justify-content:space-around;
+    justify-content: space-around;
 }
 
 /* 表格样式 */

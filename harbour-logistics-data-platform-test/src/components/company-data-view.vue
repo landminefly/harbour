@@ -211,6 +211,11 @@ export default {
     },
     mounted() {
         //加载该模块时要先初始化数据
+        if (!this.messageReactive) {
+            this.messageReactive = window.$message.loading('加载中', {
+                duration: 0
+            })
+        }
         //初始化filterDataForPage
         this.filterDataForPage = [...this.filterData];
         axios({
@@ -229,6 +234,8 @@ export default {
             //更新whichPage值
             this.companyFormMetaData.whichPage = 1;
 
+            this.messageReactive?.destroy();
+            this.messageReactive = null;
         }).catch(reason => {
             window.$message.error('服务器错误！', {
                 duration: 2000
@@ -289,7 +296,7 @@ export default {
                 <div class="form-item">
                     <div class="item-title">省市区</div>
                     <n-space vertical>
-                        <n-input class="input" placeholder="请输入" v-model:value="filterData[3]" type="text" clearable/>
+                        <n-input class="input" placeholder="请输入" v-model:value="filterData[4]" type="text" clearable/>
                     </n-space>
                 </div>
             </div>
