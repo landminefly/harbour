@@ -207,6 +207,11 @@ export default {
                     duration: 2000
                 });
             })
+        },
+        clearData(){
+            this.filterData.forEach((item,index,arr) =>{
+                arr[index] = null;
+            })
         }
     },
     mounted() {
@@ -326,8 +331,11 @@ export default {
                 </div>
             </div>
 
-            <div id="submit-btn" ref="seekBtn">
-                <n-button type="success" size="large" @click="seekData">
+            <div id="submit-btns" ref="seekBtn">
+                <n-button type="error" size="large" @click="clearData" style="margin:0 30px;">
+                    清空
+                </n-button>
+                <n-button type="success" size="large" @click="seekData" style="margin:0 10px;">
                     查找
                 </n-button>
             </div>
@@ -440,12 +448,15 @@ export default {
     text-align: center;
 }
 
-/* 提交按钮样式 */
-#submit-btn {
+/* 提交按钮区样式 */
+#submit-btns {
     position: relative;
     margin: 10px;
     left: 50%;
     width: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
 }
 
 /* 表格样式 */

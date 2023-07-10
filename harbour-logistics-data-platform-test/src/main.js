@@ -78,6 +78,24 @@ const routes = [
 	{
 		path: "/cust",
 		component: cust,
+		children:[
+			{
+				path:'data/logistics',
+				component: logisticsDataView
+			},
+			{
+				path:'data/cus',
+				component: cusDataView
+			},
+			{
+				path:'data/company',
+				component: companyDataView
+			},
+			{
+				path:'analysis',
+				component: dataAnalysis
+			}
+		],
 		beforeEnter: (to, from) => {
 			switch (store.state.isLogged) {
 				case 0:

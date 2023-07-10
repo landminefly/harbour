@@ -21,7 +21,6 @@ public class CustomerViewDAOImpl extends BaseDAO<CustomerViewBean> implements Cu
                                      AND ADDRESS LIKE ?
                                    LIMIT ?, 20;
                      """;
-        System.out.println(Arrays.toString(args));
         return super.selectForMulti(conn, sql,
                                     "%" + args[0] + "%",
                                     "%" + args[1] + "%",
