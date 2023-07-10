@@ -1,5 +1,5 @@
 <script>
-
+import axios from 'axios';
 //按需引入图表组件
 import * as echarts from 'echarts/core';
 import {
@@ -24,6 +24,10 @@ echarts.use([
 ]);
 
 export default {
+  setup() {
+    //这样就能在setup外使用Message组件
+    window.$message = useMessage()
+  },
   data() {
     return {
       //存储黑夜模式各个布局的颜色
@@ -36,7 +40,20 @@ export default {
       options: [
         {
           tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          toolbox: {
+            feature: {
+              magicType: {
+                type: ['stack']
+              },
+            },
+          },
+          emphasis: {
+            focus: 'series'
           },
           legend: {},
           grid: {
@@ -46,40 +63,34 @@ export default {
             containLabel: true
           },
           xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            type: 'value'
           },
           yAxis: {
-            type: 'value'
+            type: 'category',
+            data: null,
           },
           series: [
             {
-              name: 'Email',
-              type: 'line',
-              data: [120, 132, 101, 134, 90, 230, 210]
+              name: '进口量',
+              type: 'bar',
+              stack: 'total',
+              label: {
+                show: true,
+                fontSize: 12,
+              },
+              data: null,
             },
             {
-              name: 'Union Ads',
-              type: 'line',
-              data: [220, 182, 191, 234, 290, 330, 310]
+              name: '出口量',
+              type: 'bar',
+              stack: 'total',
+              label: {
+                show: true,
+                fontSize: 12,
+              },
+              data: null,
             },
-            {
-              name: 'Video Ads',
-              type: 'line',
-              data: [150, 232, 201, 154, 190, 330, 410]
-            },
-            {
-              name: 'Direct',
-              type: 'line',
-              data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-              name: 'Search Engine',
-              type: 'line',
-              data: [820, 932, 901, 934, 1290, 1330, 1320]
-            }
-          ]
+          ],
         },
         {
           tooltip: {
@@ -119,10 +130,71 @@ export default {
 
       ],
       //存储文本中提及的数据
-      text:[
+      text: [
 
       ]
     }
+  },
+  methods: {
+    receiveM0() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m0",
+      }).then(value => {
+
+        //插入数据
+        var port = [];
+        var importValue = [];
+        var exportValue = [];
+        value.data.forEach(item => {
+          port.push(item.port);
+          importValue.push(item.import_weight);
+          exportValue.push(item.export_weight);
+        });
+        this.options[0].yAxis.data = port;
+        this.options[0].series[0].data = importValue;
+        this.options[0].series[1].data = exportValue;
+
+        //初始化图表
+        const chart_0Dom = this.$refs.chart_0;
+        const chart_0 = echarts.init(chart_0Dom);
+        this.options[0] && chart_0.setOption(this.options[0]);
+      }).catch(reason => {
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    }
+  },
+  mounted() {
+    //监听模块wrapper宽度变化，以及时改变图表的宽度
+    //之所以要延迟1500ms，是因为如果直接开始监听，会导致表格的动画消失
+    //故要等动画结束后再开始监听
+
+
+    //接收数据，初始化图表
+    this.receiveM0();
+
+    const chart_0Dom = this.$refs.chart_0;
+    const chart_0 = echarts.init(chart_0Dom);
+
+    const chart_1Dom = this.$refs.chart_1;
+    const chart_1 = echarts.init(chart_1Dom);
+
+    setTimeout(() => {
+      const observer = new ResizeObserver(() => {
+        chart_0.resize();
+        chart_1.resize();
+      });
+
+      this.$nextTick(() => {
+        const wrapper = this.$refs.wrapper;
+        observer.observe(wrapper);
+      });
+    }, 1000);
+
+    //初始化图表
+    this.options[1] && chart_1.setOption(this.options[1]);
   },
   watch: {
     //更改黑夜模式
@@ -136,52 +208,20 @@ export default {
       immediate: true
     },
   },
-  mounted() {
-    //监听模块wrapper宽度变化，以及时改变图表的宽度
-    //之所以要延迟1500ms，是因为如果直接开始监听，会导致表格的动画消失
-    //故要等动画结束后再开始监听
-    setTimeout(() => {
-      const observer = new ResizeObserver(() => {
-        chart_0.resize();
-        chart_1.resize();
-      });
-
-      this.$nextTick(() => {
-        const wrapper = this.$refs.wrapper;
-        observer.observe(wrapper);
-      });
-    }, 1500);
-
-    //接收数据...
-
-
-    //初始化图表
-    const chart_0Dom = this.$refs.chart_0;
-    const chart_0 = echarts.init(chart_0Dom);
-    this.options[0] && chart_0.setOption(this.options[0]);
-
-    const chart_1Dom = this.$refs.chart_1;
-    const chart_1 = echarts.init(chart_1Dom);
-    this.options[1] && chart_1.setOption(this.options[1]);
-
-    //每隔一定时间更新数据...
-
-
-  }
 }
 </script>
 
 <template>
   <div id="data-analysis-wrapper" ref="wrapper">
     <!-- 标题 -->
-    <div id="company-data-title">数据分析</div>
+    <div id="data-analysis-title">数据分析</div>
 
     <!-- 图表主wrapper -->
     <div class="chart-main-wrapper"
       :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
       <!-- 图表标题 -->
       <div class="chart-main-title">
-        <p>图表1</p>
+        <p>港口吞吐量分析</p>
       </div>
       <!-- 图表wrapper -->
       <div class="chart-wrapper">
@@ -243,7 +283,7 @@ export default {
 .chart-main-wrapper {
   box-sizing: border-box;
   width: 90%;
-  margin: 30px 5%;
+  margin: 20px 5%;
   border-radius: 20px;
   border: 1px solid;
   position: relative;
@@ -269,24 +309,24 @@ export default {
 
 /* 图表样式 */
 .chart {
-  height: 500px;
-  width: 70%;
+  height: 600px;
+  width: 80%;
 }
 
 /* 分割线样式 */
 .divider {
-  height: 500px;
+  height: 600px;
   border: 1px solid;
 }
 
 /* 图表文本样式 */
 .chart-text {
-  height: 500px;
-  width: 30%;
+  height: 600px;
+  width: 20%;
   margin: 10px;
   line-height: 30px;
   text-align: center;
   overflow: auto;
-  user-select:text;
+  user-select: text;
 }
 </style>
