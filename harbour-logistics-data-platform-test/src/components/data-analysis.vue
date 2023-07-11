@@ -6,12 +6,14 @@ import {
   ToolboxComponent,
   TooltipComponent,
   GridComponent,
-  LegendComponent
+  LegendComponent,
+  DataZoomComponent
 } from 'echarts/components';
 import { BarChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
+import { PieChart } from 'echarts/charts';
 echarts.use([
   ToolboxComponent,
   TooltipComponent,
@@ -20,7 +22,9 @@ echarts.use([
   BarChart,
   CanvasRenderer,
   LineChart,
-  UniversalTransition
+  UniversalTransition,
+  DataZoomComponent,
+  PieChart
 ]);
 
 export default {
@@ -36,8 +40,13 @@ export default {
         filterBack: null,
         filterBorder: null,
       },
+      optionsInChart_4: [],
+      valueInChart_4: null,
+      //存储各个表格对象
+      charts: {},
       //存储各个表格的数据
       options: [
+        //0
         {
           tooltip: {
             trigger: 'axis',
@@ -46,6 +55,7 @@ export default {
             }
           },
           toolbox: {
+            right: 20,
             feature: {
               magicType: {
                 type: ['stack']
@@ -92,47 +102,259 @@ export default {
             },
           ],
         },
+        //1
         {
           tooltip: {
             trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
+          },
+          toolbox: {
+            orient: 'vertical',
+            right: 20,
+            top: 50,
+            feature: {
+              restore: {},
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              magicType: {
+                type: ['line', 'bar']
+              },
             }
           },
-          legend: {},
           grid: {
             left: '3%',
-            right: '4%',
-            bottom: '3%',
+            right: '5%',
             containLabel: true
           },
+          legend: {
+            selected: {},
+            type: 'scroll',
+            itemHeight: 18,
+            top: -20,
+            itemGap: 20,
+            padding: 30,
+          },
+          emphasis: {
+            focus: 'series'
+          },
           xAxis: {
-            type: 'category',
-            data: ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World']
+            type: 'time',
+            boundaryGap: false
           },
           yAxis: {
             type: 'value',
-            boundaryGap: [0, 0.01]
+            boundaryGap: [0, '50%']
+          },
+          dataZoom: [
+            {
+              type: 'inside',
+              start: 0,
+              end: 100,
+              minSpan: 20,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              start: 0,
+              end: 100,
+              minSpan: 20,
+              filterMode: 'none'
+            },
+          ],
+          series: []
+        },
+        //2
+        {
+          tooltip: {
+            trigger: 'axis'
+          },
+          toolbox: {
+            orient: 'vertical',
+            right: 20,
+            top: 50,
+            feature: {
+              restore: {},
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              magicType: {
+                type: ['line', 'bar']
+              },
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '5%',
+            containLabel: true
+          },
+          legend: {
+            selected: {},
+            type: 'scroll',
+            itemHeight: 18,
+            top: -20,
+            itemGap: 20,
+            padding: 30,
+          },
+          emphasis: {
+            focus: 'series'
+          },
+          xAxis: {
+            type: 'time',
+            boundaryGap: false
+          },
+          yAxis:
+          {
+            type: 'value',
+            name: '百分比',
+            axisLabel: {
+              formatter: function (value, index) {
+                return value * 100 + '%';
+              }
+            }
+          },
+
+          dataZoom: [
+            {
+              type: 'inside',
+              start: 0,
+              end: 100,
+              minSpan: 20,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              start: 0,
+              end: 100,
+              minSpan: 20,
+              filterMode: 'none'
+            },
+          ],
+          series: []
+        },
+        //3
+        {
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            type: 'scroll',
+            itemHeight: 18,
+            top: -30,
+            itemGap: 20,
+            padding: 30,
+          },
+          toolbox: {
+            right: 20,
+            top: 50,
+            feature: {
+              restore: {},
+            }
+          },
+          label: {
+            show: true,
+            formatter: '{b}: {d}%'
           },
           series: [
             {
-              name: '2011',
-              type: 'bar',
-              data: [18203, 23489, 29034, 104970, 131744, 630230]
+              name: 'Access From',
+              type: 'pie',
+              radius: ['30%', '80%'],
+              data: [],
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
             },
-            {
-              name: '2012',
-              type: 'bar',
-              data: [19325, 23438, 31000, 121594, 134141, 681807]
-            }
           ]
         },
-
+        //4
+        {
+          tooltip: {
+            trigger: 'item',
+            formatter: '{b}' + this.valueInChart_4 + '吞吐量：{c}',
+          },
+          legend: {
+            type: 'scroll',
+            itemHeight: 18,
+            top: -25,
+            itemGap: 20,
+            padding: [30, 250, 30, 250],
+          },
+          toolbox: {
+            right: 20,
+            top: 50,
+            feature: {
+              restore: {},
+            }
+          },
+          label: {
+            show: true,
+            formatter: '{b}: {d}%'
+          },
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: ['30%', '80%'],
+              data: [],
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            },
+          ]
+        },
+        //5
+        {
+          tooltip: {
+            trigger: 'item',
+            axisPointer: {
+              type: 'shadow'
+            },
+          },
+          emphasis: {
+            focus: 'series'
+          },
+          legend: {
+            type: 'scroll',
+            itemHeight: 18,
+            top: -30,
+            itemGap: 20,
+            padding: 30,
+          },
+          toolbox: {
+            right: 20,
+            top: 50,
+            feature: {
+              restore: {},
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '5%',
+            bottom: '3%',
+            top: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+          },
+          yAxis: {
+            type: 'category',
+            data: ['平均流转周期(天)'],
+            axisLabel: {
+              fontSize: 15,
+            }
+          },
+          series: [],
+        },
       ],
-      //存储文本中提及的数据
-      text: [
-
-      ]
     }
   },
   methods: {
@@ -159,42 +381,335 @@ export default {
         const chart_0Dom = this.$refs.chart_0;
         const chart_0 = echarts.init(chart_0Dom);
         this.options[0] && chart_0.setOption(this.options[0]);
+        //将图表对象放到this.charts中
+        this.charts["chart_0"] = chart_0;
       }).catch(reason => {
+        console.log(reason);
         window.$message.error('服务器错误！', {
           duration: 2000
         });
       })
-    }
+    },
+    receiveM1() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m1",
+      }).then(value => {
+        //记录当前的数据
+        var data = [];
+        //记录当前的货物名
+        var cargo = null;
+        //插入数据
+        value.data.forEach(item => {
+          //首次往series中存入数据系列
+          if (this.options[1].series.length == 0) {
+            data = [];
+            cargo = item.cargo;
+            this.options[1].legend.selected[item.cargo] = true;
+            this.options[1].series.push({
+              name: item.cargo,
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+            });
+          }
+          //遇到新的数据系列
+          else if (item.cargo !== cargo) {
+            //先将上次的数据系列存入series中
+            this.options[1].legend.selected[item.cargo] = false;
+            this.options[1].series[this.options[1].series.length - 1].data = data;
+            //读取新的数据系列
+            data = [];
+            cargo = item.cargo;
+            this.options[1].series.push({
+              name: item.cargo,
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+            });
+          }
+          //往数据系列中加数据
+          var date = +new Date(item.year, item.month - 1);
+          data.push([date, item.total_weight]);
+        });
+        //还要将最后一个数据系列存入series中
+        this.options[1].legend.selected[cargo] = false;
+        this.options[1].series[this.options[1].series.length - 1].data = data;
+
+        //初始化图表
+        const chart_1Dom = this.$refs.chart_1;
+        const chart_1 = echarts.init(chart_1Dom);
+        this.options[1] && chart_1.setOption(this.options[1]);
+        //将图表对象放到this.charts中
+        this.charts["chart_1"] = chart_1;
+      }).catch(reason => {
+        console.log(reason);
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    },
+    receiveM2() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m2",
+      }).then(value => {
+
+        //记录当前的数据
+        var data_monthly = [];
+        var data_yearly = [];
+        //记录当前的港口名
+        var port = null;
+        //插入数据
+        value.data.forEach(item => {
+          //首次往series中存入数据系列
+          if (this.options[2].series.length == 0) {
+            data_monthly = [];
+            data_yearly = [];
+            port = item.port;
+            this.options[2].legend.selected[item.port + '同比'] = true;
+            this.options[2].legend.selected[item.port + '环比'] = true;
+            this.options[2].series.push({
+              name: item.port + '同比',
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+              tooltip: {
+                valueFormatter: function (value) {
+                  if (value != null) {
+                    return (value * 100).toFixed(2) + '%';
+                  } else {
+                    return '无数据';
+                  }
+                }
+              },
+            });
+            this.options[2].series.push({
+              name: item.port + '环比',
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+              tooltip: {
+                valueFormatter: function (value) {
+                  if (value != null) {
+                    return (value * 100).toFixed(2) + '%';
+                  } else {
+                    return '无数据';
+                  }
+                }
+              },
+            });
+          }
+          //遇到新的数据系列
+          else if (item.port !== port) {
+            //先将上次的数据系列存入series中
+            this.options[2].legend.selected[item.port + '同比'] = false;
+            this.options[2].legend.selected[item.port + '环比'] = false;
+            this.options[2].series[this.options[2].series.length - 2].data = data_monthly;
+            this.options[2].series[this.options[2].series.length - 1].data = data_yearly;
+            //读取新的数据系列
+            data_monthly = [];
+            data_yearly = [];
+            port = item.port;
+            this.options[2].series.push({
+              name: item.port + '同比',
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+              tooltip: {
+                valueFormatter: function (value) {
+                  if (value != null) {
+                    return (value * 100).toFixed(2) + '%';
+                  } else {
+                    return '无数据';
+                  }
+                }
+              },
+            });
+            this.options[2].series.push({
+              name: item.port + '环比',
+              type: 'line',
+              symbol: 'circle',
+              symbolSize: 8,
+              tooltip: {
+                valueFormatter: function (value) {
+                  if (value != null) {
+                    return (value * 100).toFixed(2) + '%';
+                  } else {
+                    return '无数据';
+                  }
+                }
+              },
+            });
+          }
+          //往数据系列中加数据
+          var date = +new Date(item.year, item.month - 1);
+          if (item.monthly_growth_rate == 0) {
+            item.monthly_growth_rate = null;
+          }
+          if (item.yearly_growth_rate == 0) {
+            item.yearly_growth_rate = null;
+          }
+          data_monthly.push([date, item.monthly_growth_rate]);
+          data_yearly.push([date, item.yearly_growth_rate]);
+        });
+        //还要将最后一个数据系列存入series中
+        this.options[2].legend.selected[port + '同比'] = false;
+        this.options[2].legend.selected[port + '环比'] = false;
+        this.options[2].series[this.options[2].series.length - 2].data = data_monthly;
+        this.options[2].series[this.options[2].series.length - 1].data = data_yearly;
+
+        //初始化图表
+        const chart_2Dom = this.$refs.chart_2;
+        const chart_2 = echarts.init(chart_2Dom);
+        this.options[2] && chart_2.setOption(this.options[2]);
+        //将图表对象放到this.charts中
+        this.charts["chart_2"] = chart_2;
+      }).catch(reason => {
+        console.log(reason);
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    },
+    receiveM3() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m3",
+      }).then(value => {
+        value.data.forEach(item => {
+          this.options[3].series[0].data.push({
+            value: item.total_weight,
+            name: item.cargo
+          })
+        });
+        //初始化图表
+        const chart_3Dom = this.$refs.chart_3;
+        const chart_3 = echarts.init(chart_3Dom);
+        this.options[3] && chart_3.setOption(this.options[3]);
+        //将图表对象放到this.charts中
+        this.charts["chart_3"] = chart_3;
+      }).catch(reason => {
+        console.log(reason);
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    },
+    receiveM4() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m4",
+        data: "queryForCargoTypes",
+      }).then(value => {
+        for (var item of value.data) {
+          this.optionsInChart_4.push({
+            label: item,
+            value: item,
+          });
+        }
+        this.valueInChart_4 = this.optionsInChart_4[0].value;
+        this.receiveM4Data(true);
+      }).catch(reason => {
+        console.log(reason);
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    },
+    receiveM4Data(isFirst) {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m4",
+        data: this.valueInChart_4,
+      }).then(value => {
+        this.options[4].series[0].data = [];
+        value.data.forEach(item => {
+          this.options[4].series[0].data.push({
+            value: item.weight,
+            name: item.port
+          })
+        });
+        this.options[4].tooltip.formatter = '{b}' + this.valueInChart_4 + '入港总量：{c}';
+        //初始化图表
+        if (isFirst === true) {
+          var chart_4Dom = this.$refs.chart_4;
+          var chart_4 = echarts.init(chart_4Dom);
+          this.options[4] && chart_4.setOption(this.options[4]);
+          //将图表对象放到this.charts中
+          this.charts["chart_4"] = chart_4;
+        } else {
+          this.options[4] && this.charts.chart_4.setOption(this.options[4]);
+        }
+      }).catch(reason => {
+        //有个小小的bug，会报setOption不存在的错误，但运行正常，无视掉即可
+        if (String(reason).indexOf("setOption") === -1) {
+          console.log(reason);
+          window.$message.error('服务器错误！', {
+            duration: 2000
+          });
+        }
+      })
+    },
+    receiveM5() {
+      axios({
+        method: "POST",
+        url: "/api/hldp/servlet/analysis/m5",
+      }).then(value => {
+        console.log(value.data)
+        value.data.forEach(item => {
+          this.options[5].series.push({
+            name: item.cargo,
+            type: 'bar',
+            label: {
+              show: true,
+              fontSize: 12,
+            },
+            data: [item.average_time],
+          })
+        });
+        //初始化图表
+        const chart_5Dom = this.$refs.chart_5;
+        const chart_5 = echarts.init(chart_5Dom);
+        this.options[5] && chart_5.setOption(this.options[5]);
+        //将图表对象放到this.charts中
+        this.charts["chart_5"] = chart_5;
+      }).catch(reason => {
+        console.log(reason);
+        window.$message.error('服务器错误！', {
+          duration: 2000
+        });
+      })
+    },
   },
   mounted() {
+    //接收数据，初始化图表
+    this.receiveM0();
+    this.receiveM1();
+    this.receiveM2();
+    this.receiveM3();
+    this.receiveM4();
+    this.receiveM5();
+
     //监听模块wrapper宽度变化，以及时改变图表的宽度
     //之所以要延迟1500ms，是因为如果直接开始监听，会导致表格的动画消失
     //故要等动画结束后再开始监听
-
-
-    //接收数据，初始化图表
-    this.receiveM0();
-
-    const chart_0Dom = this.$refs.chart_0;
-    const chart_0 = echarts.init(chart_0Dom);
-
-    const chart_1Dom = this.$refs.chart_1;
-    const chart_1 = echarts.init(chart_1Dom);
-
     setTimeout(() => {
       const observer = new ResizeObserver(() => {
-        chart_0.resize();
-        chart_1.resize();
+        this.charts.chart_0.resize();
+        this.charts.chart_1.resize();
+        this.charts.chart_2.resize();
+        this.charts.chart_3.resize();
+        this.charts.chart_4.resize();
+        this.charts.chart_5.resize();
       });
 
       this.$nextTick(() => {
         const wrapper = this.$refs.wrapper;
         observer.observe(wrapper);
       });
-    }, 1000);
+    }, 1500);
 
-    //初始化图表
-    this.options[1] && chart_1.setOption(this.options[1]);
   },
   watch: {
     //更改黑夜模式
@@ -207,6 +722,9 @@ export default {
       //页面首次加载时初始化
       immediate: true
     },
+    valueInChart_4() {
+      this.receiveM4Data(false);
+    }
   },
 }
 </script>
@@ -227,29 +745,59 @@ export default {
       <div class="chart-wrapper">
         <!-- 图表 -->
         <div class="chart" ref="chart_0"></div>
-        <!-- 分割线 -->
-        <div class="divider" :style="{ borderColor: darkModeColor.filterBorder }"></div>
-        <!-- 图表文本 -->
-        <div class="chart-text">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt temporibus nisi cupiditate dolores adipisci ea
-          consequuntur repellendus cumque ducimus harum obcaecati atque libero maiores dignissimos doloribus, suscipit
-          voluptas ut reiciendis.
-        </div>
       </div>
     </div>
 
     <div class="chart-main-wrapper"
       :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
       <div class="chart-main-title">
-        <p>图表2</p>
+        <p>不同类型货物吞吐趋势</p>
       </div>
       <div class="chart-wrapper">
         <div class="chart" ref="chart_1"></div>
-        <div class="divider" :style="{ borderColor: darkModeColor.filterBorder }"></div>
-        <div class="chart-text">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione sit amet provident at accusantium. Ullam magnam
-          labore neque at odio, accusamus consequatur officia ad non ea nesciunt. Beatae, obcaecati illum.
-        </div>
+      </div>
+    </div>
+
+    <div class="chart-main-wrapper"
+      :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
+      <div class="chart-main-title">
+        <p>港口货物吞吐同比环比</p>
+      </div>
+      <div class="chart-wrapper">
+        <div class="chart" ref="chart_2"></div>
+      </div>
+    </div>
+
+    <div class="chart-main-wrapper"
+      :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
+      <div class="chart-main-title">
+        <p>不同货物吞吐占比</p>
+      </div>
+      <div class="chart-wrapper">
+        <div class="chart" ref="chart_3"></div>
+      </div>
+    </div>
+
+    <div class="chart-main-wrapper"
+      :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
+      <div class="chart-main-title">
+        <p>不同货物流向分析</p>
+      </div>
+      <div style="width:200px; position: absolute; left: 30px; z-index: 999;">
+        <n-select v-model:value="valueInChart_4" :options="optionsInChart_4" />
+      </div>
+      <div class="chart-wrapper">
+        <div class="chart" ref="chart_4"></div>
+      </div>
+    </div>
+
+    <div class="chart-main-wrapper"
+      :style="{ backgroundColor: darkModeColor.filterBack, borderColor: darkModeColor.filterBorder }">
+      <div class="chart-main-title">
+        <p>不同类型货物堆场流转周期分析</p>
+      </div>
+      <div class="chart-wrapper">
+        <div class="chart" ref="chart_5"></div>
       </div>
     </div>
 
@@ -310,23 +858,7 @@ export default {
 /* 图表样式 */
 .chart {
   height: 600px;
-  width: 80%;
-}
-
-/* 分割线样式 */
-.divider {
-  height: 600px;
-  border: 1px solid;
-}
-
-/* 图表文本样式 */
-.chart-text {
-  height: 600px;
-  width: 20%;
-  margin: 10px;
-  line-height: 30px;
-  text-align: center;
-  overflow: auto;
-  user-select: text;
+  width: 100%;
+  margin-bottom: 20px;
 }
 </style>
