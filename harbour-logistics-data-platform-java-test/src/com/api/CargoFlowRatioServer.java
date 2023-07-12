@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CargoFlowRatioServer {
+    /**
+     * 查询CargoFlowRatio中的所有记录
+     * @param conn 数据库连接对象
+     * @return 将查询到的记录封装到对应的bean中，再存储到一个List对象中返回
+     */
     public List<CargoFlowRatioBean> query(Connection conn, String cargoYypes) {
         List<CargoFlowRatioBean> query = null;
         try {
@@ -21,6 +26,11 @@ public class CargoFlowRatioServer {
         return query;
     }
 
+    /**
+     * 查询CargoFlowRatio中的所有cargo类型
+     * @param conn 数据库连接对象
+     * @return 将查询到的所有cargo类型以String的形式存储到一个List对象中返回
+     */
     public List<String> queryForCargoTypes(Connection conn){
         List<CargoFlowRatioBean> query = null;
         try {

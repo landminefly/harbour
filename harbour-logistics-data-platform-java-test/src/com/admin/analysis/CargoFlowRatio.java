@@ -17,6 +17,9 @@ import java.util.List;
 
 @WebServlet("/servlet/analysis/m4")
 public class CargoFlowRatio extends HttpServlet {
+    /**
+     * 处理不同货物流向分析图表的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");

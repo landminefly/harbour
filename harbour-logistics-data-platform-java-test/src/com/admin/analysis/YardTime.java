@@ -17,6 +17,9 @@ import java.util.List;
 
 @WebServlet("/servlet/analysis/m5")
 public class YardTime extends HttpServlet {
+    /**
+     * 处理不同类型货物堆场流转周期分析图表的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         YardTimeServer yardTimeServer = new YardTimeServer();

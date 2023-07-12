@@ -16,7 +16,7 @@ import java.util.List;
 @WebServlet("/servlet/analysis/m0")
 public class TotalThroughput extends HttpServlet {
     /**
-     * 处理港口的吞吐量分析图表的请求
+     * 处理港口吞吐量分析图表的请求
      */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {

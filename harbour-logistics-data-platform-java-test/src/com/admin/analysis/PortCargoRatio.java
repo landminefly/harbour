@@ -17,6 +17,9 @@ import java.util.List;
 
 @WebServlet("/servlet/analysis/m3")
 public class PortCargoRatio extends HttpServlet {
+    /**
+     * 处理不同货物吞吐占比图表的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         PortCargoRatioServer portCargoRatioServer = new PortCargoRatioServer();

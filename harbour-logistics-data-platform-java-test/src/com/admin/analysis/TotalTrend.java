@@ -17,6 +17,9 @@ import java.util.List;
 
 @WebServlet("/servlet/analysis/m1")
 public class TotalTrend extends HttpServlet {
+    /**
+     * 处理不同货物吞吐趋势图表的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         TotalTrendServer totalTrendServer = new TotalTrendServer();
