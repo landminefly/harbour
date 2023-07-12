@@ -59,4 +59,13 @@ public class ContainerStatusDAOImpl extends BaseDAO<ContainerStatusBean> impleme
         String sql = "INSERT INTO CONTAINER_STATUS VALUES (?,?,?,?,?,?,?,?,?)";
         return super.batch(conn, sql, objects);
     }
+
+    /**
+     * 清空表
+     */
+    @Override
+    public int truncate(Connection conn) throws SQLException {
+        String sql = "TRUNCATE TABLE CONTAINER_STATUS";
+        return super.update(conn, sql);
+    }
 }

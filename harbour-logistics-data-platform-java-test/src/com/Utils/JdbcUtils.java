@@ -25,7 +25,7 @@ public class JdbcUtils
         {
             //加载配置文件
             Properties properties = new Properties();
-            InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("druid.properties");
+            InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("dm8_druid.properties");
             properties.load(is);
             //使用连接池工厂DruidDataSourceFactory传入配置信息，创建连接池dataSource
             dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);

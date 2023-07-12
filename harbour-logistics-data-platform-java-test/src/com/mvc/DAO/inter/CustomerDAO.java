@@ -11,5 +11,8 @@ import java.util.List;
 public interface CustomerDAO {
     int insert(Connection conn, CustomerBean customerBean) throws SQLException;
 
-    int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException;
+    int[] insertBatch(Connection conn, List<Object> beans) throws SQLException;
+    int[] insertBatchForDistinct(Connection conn, List<Object> beans) throws SQLException;
+    int distinct(Connection conn) throws SQLException;
+    int truncate(Connection conn) throws SQLException;
 }

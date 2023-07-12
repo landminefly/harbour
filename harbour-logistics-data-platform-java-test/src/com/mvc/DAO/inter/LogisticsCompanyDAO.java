@@ -14,4 +14,5 @@ public interface LogisticsCompanyDAO {
     int insert(Connection conn, LogisticsCompanyBean logisticsCompanyBean) throws SQLException;
 
     int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException;
+    int truncate(Connection conn) throws SQLException;
 }

@@ -53,4 +53,13 @@ public class LogisticsCompanyDAOImpl extends BaseDAO<LogisticsCompanyBean> imple
         String sql = "INSERT INTO LOGISTICS_COMPANY VALUES (?,?,?,?,?,?)";
         return super.batch(conn, sql, objects);
     }
+
+    /**
+     * 清空表
+     */
+    @Override
+    public int truncate(Connection conn) throws SQLException {
+        String sql = "TRUNCATE TABLE LOGISTICS_COMPANY";
+        return super.update(conn, sql);
+    }
 }

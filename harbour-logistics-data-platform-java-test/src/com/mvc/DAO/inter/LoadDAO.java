@@ -13,4 +13,5 @@ public interface LoadDAO {
     int insert(Connection conn, LoadBean loadBean) throws SQLException;
 
     int[] insertBatch(Connection conn, ArrayList<Object> beans) throws SQLException;
+    int truncate(Connection conn) throws SQLException;
 }

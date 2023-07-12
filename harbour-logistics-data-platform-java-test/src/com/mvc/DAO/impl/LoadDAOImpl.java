@@ -67,4 +67,13 @@ public class LoadDAOImpl extends BaseDAO<LoadBean> implements LoadDAO {
         String sql = "INSERT INTO LOAD VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return super.batch(conn, sql, objects);
     }
+
+    /**
+     * 清空表
+     */
+    @Override
+    public int truncate(Connection conn) throws SQLException {
+        String sql = "TRUNCATE TABLE LOAD";
+        return super.update(conn, sql);
+    }
 }

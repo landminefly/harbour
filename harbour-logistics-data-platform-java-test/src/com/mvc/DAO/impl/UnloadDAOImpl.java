@@ -65,4 +65,12 @@ public class UnloadDAOImpl extends BaseDAO<UnloadBean> implements UnloadDAO {
         return super.batch(conn, sql, objects);
     }
 
+    /**
+     * 清空表
+     */
+    @Override
+    public int truncate(Connection conn) throws SQLException {
+        String sql = "TRUNCATE TABLE UNLOAD";
+        return super.update(conn, sql);
+    }
 }
