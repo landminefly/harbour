@@ -55,7 +55,7 @@ export default {
             }).then(value => {
                 if (value.data === 'success') {
                     this.$store.commit('loginAsAdmin');
-                    this.$router.push('/admin/source');
+                    this.$router.push('/admin');
                 } else if (value.data === 'failure') {
                     this.isErrorOccur.errorCode = 3;
                     this.setShake();
@@ -82,7 +82,7 @@ export default {
         //顾客直接登录
         cusLogin() {
             this.$store.commit('loginAsCust');
-            this.$router.push('/cust/data/logistics');
+            this.$router.push('/cust');
         }
     },
     watch: {

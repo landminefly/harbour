@@ -14,6 +14,7 @@ import logisticsDataView from './components/logistics-data-view.vue';
 import cusDataView from './components/cus-data-view.vue';
 import companyDataView from './components/company-data-view.vue';
 import dataAnalysis from './components/data-analysis.vue';
+import welcome from './components/welcome.vue'
 //导入vuex
 import { createStore } from "vuex";
 //清除默认样式
@@ -80,6 +81,10 @@ const routes = [
 		component: cust,
 		children:[
 			{
+				path:'',
+				component: welcome,
+			},
+			{
 				path:'data/logistics',
 				component: logisticsDataView
 			},
@@ -113,6 +118,10 @@ const routes = [
 		path: "/admin",
 		component: admin,
 		children:[
+			{
+				path:'',
+				component: welcome,
+			},
 			{
 				path:'source',
 				component: dataSourceManagement

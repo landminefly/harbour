@@ -40,6 +40,8 @@ export default {
         filterBack: null,
         filterBorder: null,
       },
+      //存储message
+      messageReactive: null,
       optionsInChart_4: [],
       valueInChart_4: null,
       //存储各个表格对象
@@ -656,7 +658,6 @@ export default {
         method: "POST",
         url: "/api/hldp/servlet/analysis/m5",
       }).then(value => {
-        console.log(value.data)
         value.data.forEach(item => {
           this.options[5].series.push({
             name: item.cargo,
@@ -664,6 +665,7 @@ export default {
             label: {
               show: true,
               fontSize: 12,
+              formatter:'{a}: {c}'
             },
             data: [item.average_time],
           })
@@ -683,6 +685,7 @@ export default {
     },
   },
   mounted() {
+
     //接收数据，初始化图表
     this.receiveM0();
     this.receiveM1();
@@ -692,7 +695,7 @@ export default {
     this.receiveM5();
 
     //监听模块wrapper宽度变化，以及时改变图表的宽度
-    //之所以要延迟1500ms，是因为如果直接开始监听，会导致表格的动画消失
+    //之所以要延迟2000ms，是因为如果直接开始监听，会导致表格的动画消失
     //故要等动画结束后再开始监听
     setTimeout(() => {
       const observer = new ResizeObserver(() => {
@@ -708,7 +711,7 @@ export default {
         const wrapper = this.$refs.wrapper;
         observer.observe(wrapper);
       });
-    }, 1500);
+    }, 2000);
 
   },
   watch: {

@@ -15,12 +15,15 @@ export default {
   components: {
     darkModeBtn,
   },
-  setup() {
-    //获取浏览器当前打开的模块名（实际上是地址栏从右到左直到第一个'/'为止）
-    var reg = /([^/]+)$/;
-    var result = reg.exec(window.location);
-    return {
-      result
+  //获取浏览器当前打开的模块
+  setup(){
+    var reg = /[^\/]*$/;
+    var results = reg.exec(location);
+    if(results[0] == 'cust'){
+      results[0]  = null;
+    }
+    return{
+      results,
     }
   },
   data() {
@@ -34,7 +37,7 @@ export default {
       //是否展开侧边栏
       isSidebarShown: true,
       //当前选择的模块，默认为浏览器当前打开的模块
-      selectedModule: this.result[1],
+      selectedModule: this.results[0],
       //设置导航
       menuOptions: [
         {

@@ -47,108 +47,6 @@ export default {
         }
     },
     methods: {
-        lastPage() {
-            if (this.logisticsFormMetaData.whichPage <= 1) {
-                window.$message.error('已经是第一页了', {
-                    duration: 1000
-                });
-                return;
-            }
-
-            //查数据前先禁止上一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
-            this.$refs.lastPageBtn.style.pointerEvents = "none";
-            //查找数据...
-            axios({
-                method: "POST",
-                url: "/api/hldp/servlet/view/logistics",
-                data: {
-                    originArgs: this.filterDataForPage,
-                    pageNum: this.logisticsFormMetaData.whichPage - 1,
-                }
-            }).then(value => {
-                //响应数据是一个二维数组，最后一个元素保存了查询到的总记录数，其余元素都是一个记录
-                var length = value.data.length;
-                //处理数据
-                this.logisticsFormData = value.data.slice(0, length - 1);
-                //处理页数
-                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
-                //恢复上一页按钮的点击事件
-                this.$refs.lastPageBtn.style.pointerEvents = "";
-                //更新whichPage值
-                this.logisticsFormMetaData.whichPage = this.logisticsFormMetaData.whichPage - 1;
-            }).catch(reason => {
-                window.$message.error('服务器错误！', {
-                    duration: 2000
-                });
-            })
-        },
-        nextPage() {
-            if (this.logisticsFormMetaData.whichPage >= this.logisticsFormMetaData.totalPage) {
-                window.$message.error('已经是最后一页了', {
-                    duration: 1000
-                });
-                return;
-            }
-
-            //查数据前先禁止下一页按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
-            this.$refs.nextPageBtn.style.pointerEvents = "none";
-            //查找数据...
-            axios({
-                method: "POST",
-                url: "/api/hldp/servlet/view/logistics",
-                data: {
-                    originArgs: this.filterDataForPage,
-                    pageNum: this.logisticsFormMetaData.whichPage + 1,
-                }
-            }).then(value => {
-                var length = value.data.length;
-                //处理数据
-                this.logisticsFormData = value.data.slice(0, length - 1);
-                //处理页数
-                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
-                //恢复上一页的点击事件
-                this.$refs.nextPageBtn.style.pointerEvents = "";
-                //更新whichPage值
-                this.logisticsFormMetaData.whichPage = this.logisticsFormMetaData.whichPage + 1;
-            }).catch(reason => {
-                window.$message.error('服务器错误！', {
-                    duration: 2000
-                });
-            })
-        },
-        flush() {
-            //查数据前先禁止刷新按钮的点击事件，防止在查出数据前用户再次点击，造成混乱
-            this.$refs.flushBtn.style.pointerEvents = "none";
-            //查找数据...
-            axios({
-                method: "POST",
-                url: "/api/hldp/servlet/view/logistics",
-                data: {
-                    originArgs: this.filterDataForPage,
-                    pageNum: 1,
-                }
-            }).then(value => {
-                var length = value.data.length;
-                //处理数据
-                this.logisticsFormData = value.data.slice(0, length - 1);
-                //处理页数
-                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
-                //恢复刷新的点击事件
-                this.$refs.flushBtn.style.pointerEvents = "";
-
-                //更新whichPage值
-                if (Number(value.data[length - 1][0] == 0)) {
-                    this.logisticsFormMetaData.whichPage = 0;
-                } else {
-                    this.logisticsFormMetaData.whichPage = 1;
-                }
-
-            }).catch(reason => {
-                window.$message.error('服务器错误！', {
-                    duration: 2000
-                });
-            })
-        },
         //向后端发送查找请求
         seekData() {
             //先将空字符串转为null
@@ -203,13 +101,18 @@ export default {
                 }, 1000)
 
             }).catch(reason => {
+                this.logisticsFormMetaData.whichPage = 0;
+                this.logisticsFormMetaData.totalPage = 0;
+                this.messageReactive?.destroy();
+                this.messageReactive = null;
+
                 window.$message.error('服务器错误！', {
                     duration: 2000
                 });
             })
         },
-        clearData(){
-            this.filterData.forEach((item,index,arr) =>{
+        clearData() {
+            this.filterData.forEach((item, index, arr) => {
                 arr[index] = null;
             })
         }
@@ -242,6 +145,11 @@ export default {
             this.messageReactive?.destroy();
             this.messageReactive = null;
         }).catch(reason => {
+            this.logisticsFormMetaData.whichPage = 0;
+            this.logisticsFormMetaData.totalPage = 0;
+            this.messageReactive?.destroy();
+            this.messageReactive = null;
+
             window.$message.error('服务器错误！', {
                 duration: 2000
             });
@@ -258,6 +166,33 @@ export default {
             //页面首次加载时初始化
             immediate: true
         },
+        'logisticsFormMetaData.whichPage'() {
+            //查找数据...
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/view/logistics",
+                data: {
+                    originArgs: this.filterDataForPage,
+                    pageNum: this.logisticsFormMetaData.whichPage,
+                }
+            }).then(value => {
+                var length = value.data.length;
+                //处理数据
+                this.logisticsFormData = value.data.slice(0, length - 1);
+                //处理页数
+                this.logisticsFormMetaData.totalPage = Math.ceil(Number(value.data[length - 1][0]) / 20);
+
+            }).catch(reason => {
+                this.logisticsFormMetaData.whichPage = 0;
+                this.logisticsFormMetaData.totalPage = 0;
+                this.messageReactive?.destroy();
+                this.messageReactive = null;
+
+                window.$message.error('服务器错误！', {
+                    duration: 2000
+                });
+            })
+        }
     },
 }
 </script>
@@ -371,17 +306,12 @@ export default {
 
             <!-- 表格功能按钮wrapper -->
             <div id="form-btns-wrapper">
-
-                <div id="page-wrapper">
-                    <span class="iconfont icon-fanye1" @click="lastPage" ref="lastPageBtn"></span>
-                    <span>{{ logisticsFormMetaData.whichPage }} / {{ logisticsFormMetaData.totalPage }} 页</span>
-                    <span class="iconfont icon-fanye" @click="nextPage" ref="nextPageBtn"></span>
-                </div>
-
-                <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush" ref="flushBtn"> 刷新</span>
-                </div>
-
+                <n-pagination v-model:page="logisticsFormMetaData.whichPage" :page-count="logisticsFormMetaData.totalPage"
+                    size="large" show-quick-jumper>
+                    <template #goto>
+                        跳转至
+                    </template>
+                </n-pagination>
             </div>
         </div>
     </div>
@@ -463,7 +393,7 @@ export default {
     width: 0;
     display: flex;
     flex-direction: row;
-    justify-content:space-around;
+    justify-content: space-around;
 }
 
 /* 表格样式 */

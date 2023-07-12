@@ -1,5 +1,8 @@
 package test;
 
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
@@ -7,10 +10,37 @@ public class Test1 {
 
     public static void main(String[] args) throws SQLException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-            // Connection conn = JdbcUtils.getConnection();
-            // LogisticsInfoViewDAOImpl logisticsInfoViewDAOImpl = new LogisticsInfoViewDAOImpl();
-            // List<LogisticsInfoViewBean> query = logisticsInfoViewDAOImpl.query(conn, (String) null);
-            // System.out.println(query.size());
+        Scheduler scheduler;
+
+        try {
+            // 创建调度器
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+            // 创建任务
+            JobDetail job = JobBuilder.newJob(YourJob.class)
+                                      .withIdentity("yourJob", "yourGroup")
+                                      .build();
+
+            // 创建触发器，设置定时执行的时间间隔
+            Trigger trigger = TriggerBuilder.newTrigger()
+                                            .withIdentity("yourTrigger", "yourGroup")
+                                            .startNow()
+                                            .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(5)) // 每60秒执行一次
+                                            .build();
+
+            // 将任务和触发器关联到调度器
+            scheduler.scheduleJob(job, trigger);
+
+            // 启动调度器
+            scheduler.start();
+        } catch (SchedulerException e) {
+            // 异常处理
+        }
+
+        // Connection conn = JdbcUtils.getConnection();
+        // LogisticsInfoViewDAOImpl logisticsInfoViewDAOImpl = new LogisticsInfoViewDAOImpl();
+        // List<LogisticsInfoViewBean> query = logisticsInfoViewDAOImpl.query(conn, (String) null);
+        // System.out.println(query.size());
 
         // try {
         //     Connection conn = JdbcUtils.getConnection();
