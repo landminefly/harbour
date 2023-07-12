@@ -665,7 +665,7 @@ export default {
             label: {
               show: true,
               fontSize: 12,
-              formatter:'{a}: {c}'
+              formatter: '{a}: {c}'
             },
             data: [item.average_time],
           })
@@ -685,14 +685,26 @@ export default {
     },
   },
   mounted() {
+    if (!this.messageReactive) {
+      this.messageReactive = window.$message.loading('加载中', {
+        duration: 0
+      })
+    }
 
     //接收数据，初始化图表
-    this.receiveM0();
-    this.receiveM1();
-    this.receiveM2();
-    this.receiveM3();
-    this.receiveM4();
-    this.receiveM5();
+    new Promise((resolve, reject) => {
+      this.receiveM0();
+      this.receiveM1();
+      this.receiveM2();
+      this.receiveM3();
+      this.receiveM4();
+      this.receiveM5();
+      resolve();
+    }).then((value) => {
+      setTimeout(() => {
+        this.messageReactive.destroy();
+      }, 300);
+    })
 
     //监听模块wrapper宽度变化，以及时改变图表的宽度
     //之所以要延迟2000ms，是因为如果直接开始监听，会导致表格的动画消失
@@ -712,6 +724,7 @@ export default {
         observer.observe(wrapper);
       });
     }, 2000);
+
 
   },
   watch: {
