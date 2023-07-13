@@ -53,7 +53,7 @@ export default {
 
                 axios({
                     method: "POST",
-                    url: "/api/hldp/servlet/admin/select-source",
+                    url: "servlet/admin/select-source",
                 }).then(value => {
                     this.sourceFormData = value.data;
                 }).catch(reason => {
@@ -81,7 +81,7 @@ export default {
             console.log(row[1])
             axios({
                 method: "POST",
-                url: "/api/hldp/servlet/admin/delete-source",
+                url: "servlet/admin/delete-source",
                 data: [row[0],row[1]],
             }).then(value => {
                 window.$message.success(
@@ -89,7 +89,7 @@ export default {
                 )
                 axios({
                     method: "POST",
-                    url: "/api/hldp/servlet/admin/select-source",
+                    url: "servlet/admin/select-source",
                 }).then(value => {
                     this.sourceFormData = value.data;
                 }).catch(reason => {
@@ -127,7 +127,7 @@ export default {
 
         axios({
             method: "POST",
-            url: "/api/hldp/servlet/admin/select-source",
+            url: "servlet/admin/select-source",
         }).then(value => {
             this.sourceFormData = value.data;
 

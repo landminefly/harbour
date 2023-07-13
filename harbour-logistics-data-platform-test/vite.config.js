@@ -8,7 +8,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	// base:"/hldp/",
+	base:"/hldp/",
 	plugins: [
 		vue(),
 		//自动导入naive-ui所需组件
@@ -34,15 +34,15 @@ export default defineConfig({
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
 		},
 	},
-	//服务器代理，开发环境使用
-	server: {
-		host:true,
-		proxy: {
-		  '/api': {
-			target: 'http://36.140.31.145:32612',
-			rewrite: (path) => path.replace(/^\/api/, ''),
-			changeOrigin: true,
-		  },
-		}
-	}
+	// //服务器代理，开发环境使用
+	// server: {
+	// 	host:true,
+	// 	proxy: {
+	// 	  '/api': {
+	// 		target: 'http://36.140.31.145:32612',
+	// 		rewrite: (path) => path.replace(/^\/api/, ''),
+	// 		changeOrigin: true,
+	// 	  },
+	// 	}
+	// }
 });

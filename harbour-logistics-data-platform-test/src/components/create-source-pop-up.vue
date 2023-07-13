@@ -204,7 +204,7 @@ export default {
             this.showModal = true;
             axios({
                 method: "POST",
-                url: "/api/hldp/servlet/admin/connect-source",
+                url: "servlet/admin/connect-source",
                 data: data,
             }).then(value => {
             this.showModal = false;

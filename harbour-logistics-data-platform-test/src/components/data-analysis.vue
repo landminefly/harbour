@@ -363,7 +363,7 @@ export default {
     receiveM0() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m0",
+        url: "servlet/analysis/m0",
       }).then(value => {
 
         //插入数据
@@ -395,7 +395,7 @@ export default {
     receiveM1() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m1",
+        url: "servlet/analysis/m1",
       }).then(value => {
         //记录当前的数据
         var data = [];
@@ -454,7 +454,7 @@ export default {
     receiveM2() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m2",
+        url: "servlet/analysis/m2",
       }).then(value => {
 
         //记录当前的数据
@@ -577,7 +577,7 @@ export default {
     receiveM3() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m3",
+        url: "servlet/analysis/m3",
       }).then(value => {
         value.data.forEach(item => {
           this.options[3].series[0].data.push({
@@ -601,7 +601,7 @@ export default {
     receiveM4() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m4",
+        url: "servlet/analysis/m4",
         data: "queryForCargoTypes",
       }).then(value => {
         for (var item of value.data) {
@@ -622,7 +622,7 @@ export default {
     receiveM4Data(isFirst) {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m4",
+        url: "servlet/analysis/m4",
         data: this.valueInChart_4,
       }).then(value => {
         this.options[4].series[0].data = [];
@@ -656,7 +656,7 @@ export default {
     receiveM5() {
       axios({
         method: "POST",
-        url: "/api/hldp/servlet/analysis/m5",
+        url: "servlet/analysis/m5",
       }).then(value => {
         value.data.forEach(item => {
           this.options[5].series.push({
