@@ -1,5 +1,6 @@
 <script>
 import ensureClosePopUp from './ensureClosePopUp.vue';
+import axios from 'axios';
 export default {
     components: {
         ensureClosePopUp
@@ -9,6 +10,7 @@ export default {
     emits: ['close'],
     data() {
         return {
+            showModal: false,
             //准备关闭弹窗
             readyToClose: false,
             //黑夜模式颜色
@@ -52,7 +54,13 @@ export default {
                                             name: 'MySQL路径', type: 'input', value: null
                                         },
                                         {
-                                            name: '自动同步间隔(分钟)', type: 'number', value: null
+                                            name: '要导入的数据库', type: 'input', value: null
+                                        },
+                                        {
+                                            name: '用户名', type: 'input', value: null
+                                        },
+                                        {
+                                            name: '密码', type: 'password', value: null
                                         },
                                     ]
                             },
@@ -62,9 +70,7 @@ export default {
                                         {
                                             name: 'HDFS路径', type: 'input', value: null
                                         },
-                                        {
-                                            name: '自动同步间隔(分钟)', type: 'number', value: null
-                                        },
+
                                     ]
                             },
                             {
@@ -74,7 +80,10 @@ export default {
                                             name: 'MinIO路径', type: 'input', value: null
                                         },
                                         {
-                                            name: '自动同步间隔(分钟)', type: 'number', value: null
+                                            name: '用户名', type: 'input', value: null
+                                        },
+                                        {
+                                            name: '密码', type: 'password', value: null
                                         },
                                     ]
                             }
@@ -184,13 +193,31 @@ export default {
         //向后端请求新增数据
         createSource() {
             //创建逻辑
-            //...
-            // this.warnShown.isShown = true;
-            // this.warnShown.warnMsg = '连接失败！'
-            // this.setShake();
+            var data = [];
+            data.push(this.createSteps[0].configs[this.createSteps[0].whichConfig].forms[0].value);
+            for (var item of this.createSteps[1].configs[this.createSteps[1].whichConfig].forms) {
+                data.push(item.value);
+            }
+
+            console.log(data);
+
+            this.showModal = true;
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/admin/connect-source",
+                data: data,
+            }).then(value => {
+            this.showModal = false;
             this.createWhichStep = 0;
             this.clearCreateData();
             this.$emit('close', true);
+
+            }).catch(reason => {
+                this.showModal = false;
+                this.warnShown.isShown = true;
+                this.warnShown.warnMsg = '未能连接到数据源或数据源已存在!'
+                this.setShake();
+            })
         },
     },
     watch: {
@@ -246,9 +273,8 @@ export default {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     } else if (temp[j].type === 'select') {
                         strArr.push(`${temp[j].name}: ${temp[j].value}`)
-                    } else if (temp[j].type === 'number') {
-                        strArr.push(`${temp[j].name}: ${temp[j].value}`)
                     }
+                    //密码不予展示
                 }
             }
             return strArr;
@@ -262,6 +288,15 @@ export default {
     <Transition name="shade">
         <div id="shade" v-if="isShown"></div>
     </Transition>
+
+    <n-modal v-model:show="showModal" transform-origin="center" :mask-closable="false">
+        <n-card style="width: 500px" title="请稍等" :bordered="false" size="huge" role="dialog" aria-modal="true">
+            <template #header-extra>
+                <n-spin size="small" />
+            </template>
+            正在尝试导入，可能需要较长时间，请勿刷新
+        </n-card>
+    </n-modal>
 
     <Transition name="create-source-pop-up">
         <div id="create-source-pop-up" v-if="isShown" :style="{ backgroundColor: darkModeColor.popUp }">
@@ -320,10 +355,10 @@ export default {
                                             placeholder="请输入" type="text" />
                                     </n-space>
 
-                                    <!-- 数字输入表单 -->
+                                    <!-- 密码输入表单 -->
                                     <n-space vertical>
-                                        <n-input-number class="number" v-if="form.type === 'number'"
-                                            v-model:value="form.value" placeholder="0为不自动同步" :min="0" :max="65535" />
+                                        <n-input show-password-on="click" type="password" class="password"
+                                            v-if="form.type === 'password'" v-model:value="form.value" placeholder="请输入" />
                                     </n-space>
 
                                     <!-- 信息检查部分 -->
@@ -506,7 +541,7 @@ export default {
 /* 选择、输入、数字输入表单样式 */
 #form-main .select,
 #form-main .input,
-#form-main .number {
+#form-main .password {
     width: 250px;
 }
 
@@ -518,7 +553,7 @@ export default {
 /* 警告信息样式 */
 #create-warn {
     height: 50px;
-    width: 300px;
+    width: 350px;
     line-height: 50px;
     font-size: 20px;
     border-radius: 10px;

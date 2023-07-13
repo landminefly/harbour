@@ -387,7 +387,7 @@ export default {
         this.charts["chart_0"] = chart_0;
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })
@@ -446,7 +446,7 @@ export default {
         this.charts["chart_1"] = chart_1;
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })
@@ -569,7 +569,7 @@ export default {
         this.charts["chart_2"] = chart_2;
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })
@@ -593,7 +593,7 @@ export default {
         this.charts["chart_3"] = chart_3;
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })
@@ -614,7 +614,7 @@ export default {
         this.receiveM4Data(true);
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })
@@ -647,7 +647,7 @@ export default {
         //有个小小的bug，会报setOption不存在的错误，但运行正常，无视掉即可
         if (String(reason).indexOf("setOption") === -1) {
           console.log(reason);
-          window.$message.error('服务器错误！', {
+          window.$message.error('服务器错误或数据缺失！', {
             duration: 2000
           });
         }
@@ -678,7 +678,7 @@ export default {
         this.charts["chart_5"] = chart_5;
       }).catch(reason => {
         console.log(reason);
-        window.$message.error('服务器错误！', {
+        window.$message.error('服务器错误或数据缺失！', {
           duration: 2000
         });
       })

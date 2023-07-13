@@ -1,41 +1,62 @@
 package test;
 
+import com.Utils.JdbcUtils;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Test1 {
 
-    public static void main(String[] args) throws SQLException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws SQLException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
 
-        Scheduler scheduler;
+        InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("mysql_druid.properties");
+        Properties properties = new Properties();
 
-        try {
-            // 创建调度器
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
+        properties.load(is);
+        properties.setProperty("url","111");
+        properties.setProperty("username","333");
+        properties.setProperty("password","333");
 
-            // 创建任务
-            JobDetail job = JobBuilder.newJob(YourJob.class)
-                                      .withIdentity("yourJob", "yourGroup")
-                                      .build();
+        File file = new File("src\\mysql_druid.properties");
+        System.out.println(file.exists());
+        FileWriter fw = new FileWriter(file);
+        properties.store(fw,"123");
+        is.close();
+        fw.close();
 
-            // 创建触发器，设置定时执行的时间间隔
-            Trigger trigger = TriggerBuilder.newTrigger()
-                                            .withIdentity("yourTrigger", "yourGroup")
-                                            .startNow()
-                                            .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(5)) // 每60秒执行一次
-                                            .build();
-
-            // 将任务和触发器关联到调度器
-            scheduler.scheduleJob(job, trigger);
-
-            // 启动调度器
-            scheduler.start();
-        } catch (SchedulerException e) {
-            // 异常处理
-        }
+        // Scheduler scheduler;
+        //
+        // try {
+        //     // 创建调度器
+        //     scheduler = StdSchedulerFactory.getDefaultScheduler();
+        //
+        //     // 创建任务
+        //     JobDetail job = JobBuilder.newJob(YourJob.class)
+        //                               .withIdentity("yourJob", "yourGroup")
+        //                               .build();
+        //
+        //     // 创建触发器，设置定时执行的时间间隔
+        //     Trigger trigger = TriggerBuilder.newTrigger()
+        //                                     .withIdentity("yourTrigger", "yourGroup")
+        //                                     .startNow()
+        //                                     .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(5)) // 每60秒执行一次
+        //                                     .build();
+        //
+        //     // 将任务和触发器关联到调度器
+        //     scheduler.scheduleJob(job, trigger);
+        //
+        //     // 启动调度器
+        //     scheduler.start();
+        // } catch (SchedulerException e) {
+        //     // 异常处理
+        // }
 
         // Connection conn = JdbcUtils.getConnection();
         // LogisticsInfoViewDAOImpl logisticsInfoViewDAOImpl = new LogisticsInfoViewDAOImpl();

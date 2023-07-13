@@ -1,7 +1,7 @@
 <script>
 import createSourcePopUp from './create-source-pop-up.vue'
-import modifySourcePopUp from './modify-source-pop-up.vue'
 import { useMessage } from 'naive-ui'
+import axios from 'axios'
 export default {
     setup() {
         //这样就能在setup外使用Message组件
@@ -9,10 +9,11 @@ export default {
     },
     components: {
         createSourcePopUp,
-        modifySourcePopUp,
     },
     data() {
         return {
+            //查找的Message组件
+            messageReactive: null,
             //是否显示创建弹窗
             isCreateSourcePopUpShown: false,
             //是否显示修改弹窗
@@ -30,19 +31,14 @@ export default {
                 //每页行数
                 rowCountEachPage: 20,
                 //列名
-                colName: ['数据源类型', '数据源地址', '自动同步间隔(分钟)'],
+                colName: ['数据源类型', '数据源地址'],
                 //当前页数
                 whichPage: 1,
                 //总页数
-                totalPage: 2,
+                totalPage: 1,
             },
             //表数据
-            sourceFormData:
-                [
-                    ['MySQL数据库', 'localhost:3306', '10'],
-                    ['HDFS分布式存储', 'localhost:1145', '8'],
-                    ['MinIO分布式存储', 'localhost:5140', '60'],
-                ]
+            sourceFormData: null,
         }
     },
     methods: {
@@ -51,49 +47,64 @@ export default {
             this.isCreateSourcePopUpShown = false;
             if (flag === true) {
                 //添加成功的逻辑...
-                window.$message.success(
-                    '添加成功！'
-                )
+                window.$message.success('添加成功！', {
+                    duration: 2000
+                });
+
+                axios({
+                    method: "POST",
+                    url: "/api/hldp/servlet/admin/select-source",
+                }).then(value => {
+                    this.sourceFormData = value.data;
+                }).catch(reason => {
+                    this.cusFormMetaData.whichPage = 0;
+                    this.cusFormMetaData.totalPage = 0;
+
+                    window.$message.error('服务器错误！', {
+                        duration: 2000
+                    });
+                })
             } else if (flag === false) {
-                //添加失败的逻辑...
-            }
-        },
-        //关闭修改弹窗
-        closeModifyPopUp(flag) {
-            this.isModifySourcePopUpShown = false;
-            if (flag === true) {
-                //修改成功的逻辑...
-                window.$message.success(
-                    '修改成功！'
-                )
-            } else if (flag === false) {
-                //修改失败的逻辑...
+                window.$message.error('添加失败！', {
+                    duration: 2000
+                });
             }
         },
         //打开创建弹窗
         createSource() {
             this.isCreateSourcePopUpShown = true;
         },
-        //打开修改弹窗，并传入要修改的数据
-        modifySource(row) {
-            this.dataToBeModified = row;
-            this.isModifySourcePopUpShown = true;
-        },
         //删除一行数据
         deleteSource(row, rowIndex) {
             //删除逻辑...
-            window.$message.success(
-                '删除成功！'
-            )
-        },
-        lastPage() {
-            //返回上一页数据
-        },
-        nextPage() {
-            //返回下一页数据
-        },
-        flush() {
-            //刷新数据
+
+            console.log(row[1])
+            axios({
+                method: "POST",
+                url: "/api/hldp/servlet/admin/delete-source",
+                data: [row[0],row[1]],
+            }).then(value => {
+                window.$message.success(
+                    '删除成功！'
+                )
+                axios({
+                    method: "POST",
+                    url: "/api/hldp/servlet/admin/select-source",
+                }).then(value => {
+                    this.sourceFormData = value.data;
+                }).catch(reason => {
+                    this.cusFormMetaData.whichPage = 0;
+                    this.cusFormMetaData.totalPage = 0;
+
+                    window.$message.error('服务器错误！', {
+                        duration: 2000
+                    });
+                })
+            }).catch(reason => {
+                window.$message.error('删除失败！', {
+                    duration: 2000
+                });
+            })
         },
     },
     watch: {
@@ -107,6 +118,31 @@ export default {
         },
     },
     mounted() {
+        //加载该模块时要先初始化数据
+        if (!this.messageReactive) {
+            this.messageReactive = window.$message.loading('加载中', {
+                duration: 0
+            })
+        }
+
+        axios({
+            method: "POST",
+            url: "/api/hldp/servlet/admin/select-source",
+        }).then(value => {
+            this.sourceFormData = value.data;
+
+            this.messageReactive?.destroy();
+            this.messageReactive = null;
+        }).catch(reason => {
+            this.cusFormMetaData.whichPage = 0;
+            this.cusFormMetaData.totalPage = 0;
+            this.messageReactive?.destroy();
+            this.messageReactive = null;
+
+            window.$message.error('服务器错误！', {
+                duration: 2000
+            });
+        })
     },
 }
 </script>
@@ -114,8 +150,6 @@ export default {
 <template>
     <div id="data-source-management-wrapper">
         <createSourcePopUp :isShown="isCreateSourcePopUpShown" @close="closeCreatePopUp"></createSourcePopUp>
-        <modifySourcePopUp :isShown="isModifySourcePopUpShown" :data="dataToBeModified" @close="closeModifyPopUp">
-        </modifySourcePopUp>
         <!-- 标题 -->
         <div id="data-source-management-title">数据源管理</div>
 
@@ -147,7 +181,6 @@ export default {
                     <td :style="{ borderColor: darkModeColor.border }">
                         <!-- 数据管理按钮wrapper -->
                         <div id="manageBtnsWrapper">
-                            <n-button type="warning" @click="modifySource(row)">修改</n-button>
 
                             <n-popconfirm @positive-click="deleteSource(row, rowIndex)" negative-text="取消"
                                 positive-text="确认">
@@ -156,27 +189,10 @@ export default {
                                 </template>
                                 确定删除？
                             </n-popconfirm>
-
-                            <n-button type="success">同步</n-button>
                         </div>
                     </td>
                 </tr>
             </table>
-
-            <!-- 表格功能按钮wrapper -->
-            <div id="form-btns-wrapper">
-
-                <div id="page-wrapper">
-                    <span class="iconfont icon-fanye1" @click="lastPage"></span>
-                    <span>{{ sourceFormMetaData.whichPage }} / {{ sourceFormMetaData.totalPage }} 页</span>
-                    <span class="iconfont icon-fanye" @click="nextPage"></span>
-                </div>
-
-                <div id="flush-wrapper">
-                    <span class="iconfont icon-shuaxin" @click="flush"> 刷新</span>
-                </div>
-
-            </div>
         </div>
     </div>
 </template>
@@ -237,12 +253,9 @@ export default {
     white-space: nowrap;
 }
 
-#source-form td:nth-child(3) {
-    width: 20%;
-}
-
-#source-form td:last-child {
-    width: 20%;
+#source-form td:last-child,
+#source-form td:first-child {
+    width: 10%;
 }
 
 #source-form tr {
@@ -270,42 +283,5 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-}
-
-/* 表格功能按钮样式 */
-#form-btns-wrapper {
-    height: 40px;
-    margin: 20px 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-}
-
-#flush-wrapper,
-#page-wrapper {
-    font-size: 18px;
-    height: 40px;
-    padding: 3px 13px;
-    margin-left: 10px;
-    line-height: 40px;
-    text-align: center;
-    background-color: rgb(128, 128, 128, 0.3);
-    border-radius: 10px;
-}
-
-#form-btns-wrapper span {
-    font-size: 18px;
-    padding: 0 2px;
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-#form-btns-wrapper span:not(:nth-child(2)):hover {
-    transform: scale(1.1);
-}
-
-#form-btns-wrapper span:not(:nth-child(2)):active {
-    transform: scale(0.9);
 }
 </style>

@@ -19,7 +19,7 @@ public class ConnectToHadoop {
     //表枚举属性
     TableEnum tableEnum = null;
 
-    public void connect(Connection conn,String url) throws SQLException {
+    public void connect(Connection conn,String url) {
         try {
             // Hadoop配置
             Configuration conf = new Configuration();

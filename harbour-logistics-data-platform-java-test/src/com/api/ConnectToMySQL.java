@@ -12,23 +12,22 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class ConnectToMySQL {
     private DruidDataSource dataSource = null;
     private QueryRunner queryRunner = null;
 
-    public void connect(Connection connForDM) {
+    public void connect(Connection connForDM, Map<String,String> hashMap) {
         Connection connForMySQL = null;
         try {
-            //加载配置文件
-            Properties properties = new Properties();
-            InputStream is = JdbcUtils.class.getClassLoader().getResourceAsStream("mysql_druid.properties");
-            properties.load(is);
             //使用连接池工厂DruidDataSourceFactory传入配置信息，创建连接池dataSource
-            dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
+            dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(hashMap);
             //设置validationQuery
             dataSource.setValidationQuery("SELECT 1");
+            //设置maxWait，防止数据库连接不上导致的程序假死
+            dataSource.setMaxWait(3000);
             connForMySQL = dataSource.getConnection();
             queryRunner = new QueryRunner();
 
@@ -47,7 +46,7 @@ public class ConnectToMySQL {
 
             customerDAO.distinct(connForDM);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
