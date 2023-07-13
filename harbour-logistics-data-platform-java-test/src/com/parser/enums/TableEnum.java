@@ -4,6 +4,10 @@ import com.mvc.DAO.impl.*;
 import com.mvc.DAO.inter.LogisticsInfoDAO;
 import com.mvc.bean.*;
 
+/**
+ * 表枚举类，枚举了数据源涉及到的所有表
+ * 每个表枚举对象都存储了其对应的DAO实现类对象和Bean类对象，便于执行反射操作
+ */
 public enum TableEnum {
     CONTAINER_STATUS(ContainerStatusBean.class, ContainerStatusDAOImpl.class),
     CUSTOMER(CustomerBean.class, CustomerDAOImpl.class),

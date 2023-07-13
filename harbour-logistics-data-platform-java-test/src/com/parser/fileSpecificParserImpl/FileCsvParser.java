@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * 解析Csv文件的类
+ */
 public class FileCsvParser implements FileSpecificParser {
     //表枚举属性
     TableEnum tableEnum = null;

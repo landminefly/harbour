@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.mvc.DAO.impl.CustomerDAOImpl;
 import com.mvc.bean.SourcesBean;
 import com.parser.enums.TableEnum;
-import org.checkerframework.checker.units.qual.C;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,15 +15,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 @WebServlet("/servlet/admin/delete-source")
 public class DeleteSource extends HttpServlet {
     TableEnum tableEnum = null;
 
+    /**
+     * 处理删除数据源的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         try {

@@ -17,12 +17,13 @@ import javax.servlet.http.HttpServlet;
 import java.io.*;
 import java.sql.Connection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 @WebServlet("/servlet/admin/connect-source")
 public class ConnectToSource extends HttpServlet {
 
+    /**
+     * 处理新增数据源请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");

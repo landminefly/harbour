@@ -30,9 +30,12 @@ import java.util.Properties;
 @WebListener
 public class CentralListener implements ServletContextListener {
 
-    /**
+    /*
      * 注意：如果想要在本地服务器上运行，必须把这个方法注释掉，否则连接不上数据源将导致
      * contextInitialized方法无法执行完毕，也就会导致项目无法部署
+     */
+    /**
+     * 启动应用程序时，先将3个数据源导入，并配置好Sources表
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {

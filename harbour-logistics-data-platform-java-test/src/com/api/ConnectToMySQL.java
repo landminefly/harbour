@@ -19,6 +19,15 @@ public class ConnectToMySQL {
     private DruidDataSource dataSource = null;
     private QueryRunner queryRunner = null;
 
+    /**
+     * 连接到MySQL并将数据导入DM8
+     * @param connForDM DM8连接
+     * @param hashMap 连接MySQL的配置信息，其中至少以下四项配置
+     *                url：连接到MySQL的地址（比如jdbc:mysql://mysqla-mysqld.damenga-zone.svc:3306/cnsoft?useSSL=false&serverTimezone=UTC）
+     *                username：登录到MySQL的用户名
+     *                password：登录到MySQL的密码
+     *                driverClassName：MySQL驱动程序（比如com.mysql.cj.jdbc.Driver）
+     */
     public void connect(Connection connForDM, Map<String,String> hashMap) {
         Connection connForMySQL = null;
         try {

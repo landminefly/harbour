@@ -9,6 +9,12 @@ import java.util.List;
 
 public class SourcesServer {
 
+    /**
+     * 向Sources表中插入一条记录
+     * @param conn DM8连接
+     * @param bean SourcesBean对象
+     * @return
+     */
     public int insert(Connection conn, SourcesBean bean){
         int insert = 0;
         try {
@@ -19,7 +25,11 @@ public class SourcesServer {
         return insert;
     }
 
-
+    /**
+     * 从Sources表中查询全部记录
+     * @param conn DM8连接
+     * @return
+     */
     public List<SourcesBean> selectForAll(Connection conn){
         List<SourcesBean> insert = null;
         try {
@@ -30,6 +40,12 @@ public class SourcesServer {
         return insert;
     }
 
+    /**
+     * 向Sources表查询是否存在一条记录，查询依据是address字段
+     * @param conn DM8连接
+     * @param bean SourcesBean对象，除了address属性以外，可以为null
+     * @return
+     */
     public boolean isExist(Connection conn, SourcesBean bean){
         boolean isExist = true;
         try {
@@ -40,6 +56,12 @@ public class SourcesServer {
         return isExist;
     }
 
+    /**
+     * 从Sources表中删除一条记录，删除依据是address字段
+     * @param conn DM8连接
+     * @param bean SourcesBean对象，除了address属性以外，可以为null
+     * @return
+     */
     public int delete(Connection conn, SourcesBean bean) {
         int insert = 0;
         try {
@@ -50,7 +72,11 @@ public class SourcesServer {
         return insert;
     }
 
-
+    /**
+     * 清空Sources表
+     * @param conn DM8连接
+     * @return
+     */
     public int truncate(Connection conn) {
         int insert = 0;
         try {

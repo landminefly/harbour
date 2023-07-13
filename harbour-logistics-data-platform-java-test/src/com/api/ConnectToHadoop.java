@@ -19,6 +19,11 @@ public class ConnectToHadoop {
     //表枚举属性
     TableEnum tableEnum = null;
 
+    /**
+     * 连接到HDFS存储并将数据导入DM8
+     * @param conn DM8连接
+     * @param url HDFS存储地址
+     */
     public void connect(Connection conn,String url) {
         try {
             // Hadoop配置
@@ -57,6 +62,7 @@ public class ConnectToHadoop {
                 insertBatch.invoke(DAO,conn);
             }
 
+            //解析文件
             for (File listFile : file.listFiles()) {
                 fileParser.parse(listFile,conn);
             }

@@ -21,6 +21,14 @@ public class ConnectToMinIO {
 
     TableEnum tableEnum = null;
 
+    /**
+     * 连接到MinIO存储并将数据导入DM8
+     *
+     * @param conn DM8连接
+     * @param url  MinIO存储地址
+     * @param usr  登录到MinIO的用户名
+     * @param pwd  登录到MinIO的密码
+     */
     public void connect(Connection conn, String url, String usr, String pwd) {
         try {
             MinioClient minioClient =
@@ -95,7 +103,7 @@ public class ConnectToMinIO {
                 insertBatch.invoke(DAO, conn);
 
             }
-
+            //解析文件
             for (File listFile : file.listFiles()) {
                 fileParser.parse(listFile, conn);
             }

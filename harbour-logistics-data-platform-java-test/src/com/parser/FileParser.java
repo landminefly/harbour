@@ -8,6 +8,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * 泛的解析类，判断文件的具体类型后转到对应的具体解析类执行
+ * 外部可以直接调用该类完成文件的解析操作
+ */
 public class FileParser {
     FileEnum fileEnum = null;
 

@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 解析Txt文件的类
+ */
 public class FileTxtParser implements FileSpecificParser {
     //表枚举属性
     TableEnum tableEnum = null;

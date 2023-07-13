@@ -23,6 +23,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * 解析Xlsx的类，使用了Poi库来读取文件
+ */
 public class FileXlsxParser implements FileSpecificParser {
     //表枚举属性
     TableEnum tableEnum = null;

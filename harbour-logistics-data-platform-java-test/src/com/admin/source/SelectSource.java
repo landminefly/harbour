@@ -17,6 +17,10 @@ import java.util.List;
 
 @WebServlet("/servlet/admin/select-source")
 public class SelectSource extends HttpServlet {
+
+    /**
+     * 处理查询数据源的请求
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
 

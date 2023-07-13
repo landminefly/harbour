@@ -11,6 +11,16 @@ import java.sql.SQLException;
 @WebFilter(urlPatterns = "/*")
 public class CentralFilter implements Filter {
 
+    /**
+     * 在执行所有请求所对应的Servlet之前，先获取一个DM数据库连接，设置为自动提交为false，并存储到request对象中
+     * 此次请求所执行的所有数据库操作均使用该连接，以便出现问题后可以顺利将此次请求所执行的所有数据库操作回滚
+     * 从而实现请求操作的原子化
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
