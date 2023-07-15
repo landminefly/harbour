@@ -197,7 +197,7 @@ export default {
     <div id="admin-header" :style="{ backgroundColor: darkModeColor.header }">
 
       <div id="admin-title-wrapper">
-        <div id="admin-title">什么什么系统</div>
+        <div id="admin-title">港口物流信息数据中台系统</div>
       </div>
 
       <div id="admin-welcome">
@@ -283,7 +283,7 @@ export default {
   left: 30px;
   height: 80px;
   line-height: 80px;
-  width: 300px;
+  width: 400px;
   font-size: 30px;
   font-weight: 900;
   text-align: start;

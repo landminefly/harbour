@@ -46,7 +46,7 @@ export default {
             var that = this;
             axios({
                 method: "POST",
-                url: "/api/hldp/servlet/admin/login",
+                url: "servlet/admin/login",
                 data: {
                     //明文传输，不管了XD
                     username: this.userInput,
@@ -113,7 +113,7 @@ export default {
             <!-- 登录选择界面 -->
             <div v-if="selectWhich === 0" id="login-select-wrapper">
                 <div id="title">
-                    <p>欢迎登录什么什么系统</p>
+                    <p>欢迎登录港口物流信息数据中台系统</p>
                 </div>
                 <div id="cus-login-wrapper" @click="selectWhich = 1" @click.prevent="cusLogin"
                     :style="{ backgroundColor: isDarkMode.backgroundColor }">
@@ -222,8 +222,9 @@ body.login::after {
 #title {
     color: #f0f6fc;
     position: absolute;
-    top: 100px;
-    font-size: 100px;
+    top: 150px;
+    font-size: 70px;
+    font-weight: 900;
     left: 0;
     right: 0;
     margin: auto;

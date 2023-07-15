@@ -65,7 +65,7 @@ export default {
             //查找数据...
             axios({
                 method: "POST",
-                url: "/api/hldp/servlet/view/company",
+                url: "servlet/view/company",
                 data: {
                     originArgs: this.filterData,
                     pageNum: 1,
@@ -123,7 +123,7 @@ export default {
         this.filterDataForPage = [...this.filterData];
         axios({
             method: "POST",
-            url: "/api/hldp/servlet/view/company",
+            url: "servlet/view/company",
             data: {
                 originArgs: this.filterData,
                 pageNum: 1,
@@ -165,7 +165,7 @@ export default {
             //查找数据...
             axios({
                 method: "POST",
-                url: "/api/hldp/servlet/view/company",
+                url: "servlet/view/company",
                 data: {
                     originArgs: this.filterDataForPage,
                     pageNum: this.companyFormMetaData.whichPage,
